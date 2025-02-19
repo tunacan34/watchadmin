@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   Table,
@@ -23,7 +22,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Search, Filter, MessageSquare, Trash2, AlertTriangle, User } from "lucide-react";
+import { Search, Filter, MessageSquare, Trash2, AlertTriangle, User, Mail, MoreVertical } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -39,7 +38,6 @@ interface Comment {
   isReported: boolean;
 }
 
-// Örnek veri
 const dummyComments: Comment[] = [
   {
     id: "1",
@@ -94,6 +92,15 @@ const Comments = () => {
         description: "Seçilen yorum başarıyla silindi.",
       });
     }
+  };
+
+  const handleSendWarning = (comment: Comment) => {
+    console.log("Uyarı maili gönderiliyor:", comment.userId);
+    
+    toast({
+      title: "Uyarı maili gönderildi",
+      description: `${comment.userName} kullanıcısına uyarı maili gönderildi.`,
+    });
   };
 
   const formatDateTime = (date: Date) => {
@@ -179,16 +186,32 @@ const Comments = () => {
                   )}
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setSelectedComment(comment);
-                      setDeleteDialogOpen(true);
-                    }}
-                  >
-                    <Trash2 className="w-4 h-4 text-destructive" />
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon">
+                        <MoreVertical className="w-4 h-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => handleSendWarning(comment)}
+                        className="flex items-center gap-2"
+                      >
+                        <Mail className="w-4 h-4" />
+                        Uyarı Maili Gönder
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setSelectedComment(comment);
+                          setDeleteDialogOpen(true);
+                        }}
+                        className="flex items-center gap-2 text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Yorumu Sil
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}
