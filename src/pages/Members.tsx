@@ -1,3 +1,4 @@
+
 import {
   Table,
   TableBody,
@@ -8,14 +9,16 @@ import {
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, User, Eye, Bell, Pause } from "lucide-react";
+import { MoreHorizontal, User, Eye, Bell, Pause, Search } from "lucide-react";
 import { format } from "date-fns";
+import { useState } from "react";
 
 const members = [
   {
@@ -24,6 +27,7 @@ const members = [
     fullName: "Ahmet Yılmaz",
     email: "ahmet.yilmaz@email.com",
     phone: "+90 532 123 4567",
+    city: "İstanbul",
     joinDate: new Date("2024-01-15"),
   },
   {
@@ -32,6 +36,7 @@ const members = [
     fullName: "Ayşe Demir",
     email: "ayse.demir@email.com",
     phone: "+90 533 234 5678",
+    city: "Ankara",
     joinDate: new Date("2024-02-01"),
   },
   {
@@ -40,6 +45,7 @@ const members = [
     fullName: "Mehmet Kaya",
     email: "mehmet.kaya@email.com",
     phone: "+90 535 345 6789",
+    city: "İzmir",
     joinDate: new Date("2024-02-15"),
   },
   {
@@ -48,6 +54,7 @@ const members = [
     fullName: "Zeynep Çelik",
     email: "zeynep.celik@email.com",
     phone: "+90 536 456 7890",
+    city: "Bursa",
     joinDate: new Date("2024-03-01"),
   },
   {
@@ -56,6 +63,7 @@ const members = [
     fullName: "Mustafa Şahin",
     email: "mustafa.sahin@email.com",
     phone: "+90 537 567 8901",
+    city: "Antalya",
     joinDate: new Date("2024-03-15"),
   },
   {
@@ -64,6 +72,7 @@ const members = [
     fullName: "Fatma Yıldız",
     email: "fatma.yildiz@email.com",
     phone: "+90 538 678 9012",
+    city: "İstanbul",
     joinDate: new Date("2024-03-20"),
   },
   {
@@ -72,6 +81,7 @@ const members = [
     fullName: "Ali Öztürk",
     email: "ali.ozturk@email.com",
     phone: "+90 539 789 0123",
+    city: "Ankara",
     joinDate: new Date("2024-03-25"),
   },
   {
@@ -80,6 +90,7 @@ const members = [
     fullName: "Selin Aktaş",
     email: "selin.aktas@email.com",
     phone: "+90 532 890 1234",
+    city: "İzmir",
     joinDate: new Date("2024-04-01"),
   },
   {
@@ -88,6 +99,7 @@ const members = [
     fullName: "Can Aydın",
     email: "can.aydin@email.com",
     phone: "+90 533 901 2345",
+    city: "Bursa",
     joinDate: new Date("2024-04-05"),
   },
   {
@@ -96,15 +108,35 @@ const members = [
     fullName: "Elif Koç",
     email: "elif.koc@email.com",
     phone: "+90 535 012 3456",
+    city: "Antalya",
     joinDate: new Date("2024-04-10"),
   },
 ];
 
 const Members = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredMembers = members.filter((member) =>
+    Object.values(member).some((value) =>
+      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
+
   return (
     <div className="p-8">
       <h1 className="text-3xl font-semibold text-admin-foreground mb-8">ÜYELER</h1>
       
+      <div className="mb-6 flex items-center gap-2">
+        <Search className="w-5 h-5 text-gray-500" />
+        <Input
+          type="search"
+          placeholder="Üye ara..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="max-w-sm"
+        />
+      </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -113,12 +145,13 @@ const Members = () => {
               <TableHead>Adı Soyadı</TableHead>
               <TableHead>E-posta</TableHead>
               <TableHead>Telefon</TableHead>
+              <TableHead>Şehir</TableHead>
               <TableHead>Üyelik Tarihi</TableHead>
               <TableHead className="text-right">İşlemler</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {members.map((member) => (
+            {filteredMembers.map((member) => (
               <TableRow key={member.id}>
                 <TableCell>
                   <Avatar>
@@ -131,6 +164,7 @@ const Members = () => {
                 <TableCell className="font-medium">{member.fullName}</TableCell>
                 <TableCell>{member.email}</TableCell>
                 <TableCell>{member.phone}</TableCell>
+                <TableCell>{member.city}</TableCell>
                 <TableCell>{format(member.joinDate, 'dd.MM.yyyy')}</TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
