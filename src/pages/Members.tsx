@@ -16,7 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, User, Eye, Bell, Pause, Search, Edit, RotateCcw, Send, UserPlus, Store } from "lucide-react";
+import { MoreHorizontal, User, Eye, Bell, Pause, Search, Edit, RotateCcw, Send, UserPlus, Store, Crown } from "lucide-react";
 import { format } from "date-fns";
 import { useState } from "react";
 
@@ -29,6 +29,7 @@ const members = [
     phone: "+90 532 123 4567",
     city: "İstanbul",
     store: "Yılmaz Saat",
+    storeType: "premium",
     joinDate: new Date("2024-01-15"),
   },
   {
@@ -39,6 +40,7 @@ const members = [
     phone: "+90 533 234 5678",
     city: "Ankara",
     store: null,
+    storeType: null,
     joinDate: new Date("2024-02-01"),
   },
   {
@@ -49,6 +51,7 @@ const members = [
     phone: "+90 535 345 6789",
     city: "İzmir",
     store: "Kaya Saat",
+    storeType: "standard",
     joinDate: new Date("2024-02-15"),
   },
   {
@@ -59,6 +62,7 @@ const members = [
     phone: "+90 536 456 7890",
     city: "Bursa",
     store: null,
+    storeType: null,
     joinDate: new Date("2024-03-01"),
   },
   {
@@ -69,6 +73,7 @@ const members = [
     phone: "+90 537 567 8901",
     city: "Antalya",
     store: "Şahin Saat",
+    storeType: "premium",
     joinDate: new Date("2024-03-15"),
   },
   {
@@ -79,6 +84,7 @@ const members = [
     phone: "+90 538 678 9012",
     city: "İstanbul",
     store: null,
+    storeType: null,
     joinDate: new Date("2024-03-20"),
   },
   {
@@ -89,6 +95,7 @@ const members = [
     phone: "+90 539 789 0123",
     city: "Ankara",
     store: "Öztürk Saat",
+    storeType: "standard",
     joinDate: new Date("2024-03-25"),
   },
   {
@@ -99,6 +106,7 @@ const members = [
     phone: "+90 532 890 1234",
     city: "İzmir",
     store: null,
+    storeType: null,
     joinDate: new Date("2024-04-01"),
   },
   {
@@ -109,6 +117,7 @@ const members = [
     phone: "+90 533 901 2345",
     city: "Bursa",
     store: "Aydın Saat",
+    storeType: "premium",
     joinDate: new Date("2024-04-05"),
   },
   {
@@ -119,6 +128,7 @@ const members = [
     phone: "+90 535 012 3456",
     city: "Antalya",
     store: null,
+    storeType: null,
     joinDate: new Date("2024-04-10"),
   },
 ];
@@ -204,6 +214,7 @@ const Members = () => {
               <TableHead>Telefon</TableHead>
               <TableHead>Şehir</TableHead>
               <TableHead>Mağaza</TableHead>
+              <TableHead>Mağaza Tipi</TableHead>
               <TableHead>Üyelik Tarihi</TableHead>
               <TableHead className="text-right">İşlemler</TableHead>
             </TableRow>
@@ -228,6 +239,22 @@ const Members = () => {
                     <div className="flex items-center gap-2">
                       <Store className="w-4 h-4 text-gray-500" />
                       {member.store}
+                    </div>
+                  ) : (
+                    "-"
+                  )}
+                </TableCell>
+                <TableCell>
+                  {member.storeType ? (
+                    <div className="flex items-center gap-2">
+                      {member.storeType === "premium" ? (
+                        <Crown className="w-4 h-4 text-yellow-500" />
+                      ) : (
+                        <Store className="w-4 h-4 text-gray-500" />
+                      )}
+                      <span className={member.storeType === "premium" ? "text-yellow-500 font-medium" : ""}>
+                        {member.storeType === "premium" ? "Premium" : "Standart"}
+                      </span>
                     </div>
                   ) : (
                     "-"
