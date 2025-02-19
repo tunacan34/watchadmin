@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   Table,
@@ -47,14 +46,12 @@ interface Notification {
   recipients?: string[];
 }
 
-// Örnek kullanıcı verileri
 const dummyUsers: User[] = [
   { id: "1", name: "Ahmet Yılmaz", memberNo: "M001", phone: "532 123 4567", email: "ahmet@example.com" },
   { id: "2", name: "Ayşe Demir", memberNo: "M002", phone: "533 234 5678", email: "ayse@example.com" },
   { id: "3", name: "Mehmet Kaya", memberNo: "M003", phone: "534 345 6789", email: "mehmet@example.com" },
 ];
 
-// Örnek bildirim verileri
 const dummyNotifications: Notification[] = [
   {
     id: "1",
@@ -212,22 +209,23 @@ const Notifications = () => {
               {selectedUsers.length > 0 && (
                 <div className="space-y-2">
                   <Label>Seçili Kullanıcılar ({selectedUsers.length})</Label>
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                     {selectedUsers.map((user) => (
                       <div
                         key={user.id}
-                        className="flex items-center justify-between p-2 border rounded-lg"
+                        className="flex items-center justify-between p-2 border rounded-lg bg-white hover:bg-gray-50 transition-colors"
                       >
-                        <div>
-                          <div className="font-medium">{user.name}</div>
-                          <div className="text-sm text-muted-foreground">
-                            Üye No: {user.memberNo} · Tel: {user.phone}
+                        <div className="min-w-0 flex-1">
+                          <div className="font-medium truncate">{user.name}</div>
+                          <div className="text-sm text-muted-foreground truncate">
+                            {user.memberNo} · {user.phone}
                           </div>
                         </div>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => handleRemoveUser(user.id)}
+                          className="ml-2 shrink-0"
                         >
                           Kaldır
                         </Button>
@@ -269,8 +267,7 @@ const Notifications = () => {
       </Card>
 
       <div className="space-y-4">
-        <div className="flex items
--center justify-between">
+        <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-admin-foreground">Gönderilen Bildirimler</h2>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
