@@ -9,7 +9,7 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Plus, Package } from "lucide-react";
+import { Plus, Package, Target, Trophy } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -42,24 +42,24 @@ const Boosters = () => {
     },
     {
       id: "2",
-      name: "Standart Paket",
-      description: "En çok tercih edilen paket",
+      name: "Standart Vitrin",
+      description: "İlanlarınız vitrin bölümünde öne çıksın",
       listingCount: 10,
       promoCount: 2,
       duration: 30,
       price: 89.99,
-      type: "listing",
+      type: "showcase",
       userType: "member"
     },
     {
       id: "3",
-      name: "Premium Paket",
-      description: "Profesyonel satıcılar için özel paket",
+      name: "Premium Arama",
+      description: "Aramada en üst sıralarda yer alın",
       listingCount: 20,
       promoCount: 5,
       duration: 45,
       price: 159.99,
-      type: "listing",
+      type: "search",
       userType: "standard_store"
     },
     {
@@ -75,68 +75,68 @@ const Boosters = () => {
     },
     {
       id: "5",
-      name: "Gold Paket",
-      description: "Yüksek hacimli satıcılar için ideal",
+      name: "Gold Vitrin",
+      description: "Vitrin bölümünde maksimum görünürlük",
       listingCount: 30,
       promoCount: 8,
       duration: 60,
       price: 249.99,
-      type: "listing",
+      type: "showcase",
       userType: "standard_store"
     },
     {
       id: "6",
-      name: "Platinum Paket",
-      description: "Maximum görünürlük ve satış fırsatı",
+      name: "Platinum Arama",
+      description: "En üst sırada kalıcı görünürlük",
       listingCount: 50,
       promoCount: 15,
       duration: 90,
       price: 399.99,
-      type: "listing",
+      type: "search",
       userType: "standard_store"
     },
     {
       id: "7",
-      name: "Ekonomik Paket",
-      description: "Uygun fiyatlı temel paket",
+      name: "Ekonomik Vitrin",
+      description: "Uygun fiyatlı vitrin paketi",
       listingCount: 8,
       promoCount: 1,
       duration: 30,
       price: 69.99,
-      type: "listing",
+      type: "showcase",
       userType: "member"
     },
     {
       id: "8",
-      name: "Profesyonel Paket",
-      description: "İş profesyonelleri için özel seçim",
+      name: "Profesyonel Arama",
+      description: "Aramada sürekli üst sıralarda olun",
       listingCount: 25,
       promoCount: 6,
       duration: 45,
       price: 199.99,
-      type: "listing",
+      type: "search",
       userType: "standard_store"
     },
     {
       id: "9",
-      name: "Elite Paket",
-      description: "Üst düzey satıcılar için premium çözüm",
+      name: "Elite Vitrin",
+      description: "Üst düzey vitrin görünürlüğü",
       listingCount: 40,
       promoCount: 12,
       duration: 60,
       price: 299.99,
-      type: "listing",
+      type: "showcase",
       userType: "standard_store"
     },
     {
       id: "10",
-      name: "Haftalık Paket",
-      description: "Kısa süreli satışlar için ideal",
+      name: "Haftalık Arama",
+      description: "Kısa süreli arama optimizasyonu",
       listingCount: 4,
       promoCount: 1,
       duration: 7,
       price: 19.99,
-      type: "listing",
+      type: "search",
       userType: "member"
     },
     {
@@ -152,13 +152,13 @@ const Boosters = () => {
     },
     {
       id: "12",
-      name: "Deneme Paketi",
-      description: "Yeni başlayanlar için test paketi",
+      name: "Deneme Vitrin",
+      description: "Vitrin özelliğini test edin",
       listingCount: 2,
       promoCount: 1,
       duration: 15,
       price: 14.99,
-      type: "listing",
+      type: "showcase",
       userType: "member"
     }
   ];
@@ -188,7 +188,7 @@ const Boosters = () => {
 
   const handleSubmit = () => {
     const newBooster: Booster = {
-      id: Date.now().toString(), // Geçici ID oluşturma
+      id: Date.now().toString(),
       ...formData
     };
     
@@ -204,6 +204,17 @@ const Boosters = () => {
       userType: "member",
     });
     setOpen(false);
+  };
+
+  const getBoosterIcon = (type: string) => {
+    switch (type) {
+      case 'showcase':
+        return <Trophy className="w-6 h-6 text-primary" />;
+      case 'search':
+        return <Target className="w-6 h-6 text-primary" />;
+      default:
+        return <Package className="w-6 h-6 text-primary" />;
+    }
   };
 
   return (
@@ -338,7 +349,7 @@ const Boosters = () => {
           >
             <div className="flex items-center gap-4 mb-4">
               <div className="p-2 rounded-full bg-primary/10">
-                <Package className="w-6 h-6 text-primary" />
+                {getBoosterIcon(booster.type)}
               </div>
               <div>
                 <h3 className="font-semibold">{booster.name}</h3>
