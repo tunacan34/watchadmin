@@ -15,6 +15,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { MoreHorizontal, User, Eye, Bell, Pause, Search, Edit, RotateCcw, Send, UserPlus, Store, Crown, BadgeCheck } from "lucide-react";
 import { format } from "date-fns";
 import { useState } from "react";
@@ -266,6 +274,8 @@ const Members = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<"all" | "store" | "member">("all");
   const [verificationFilter, setVerificationFilter] = useState<"all" | "sms-tc" | "sms" | "tc" | "unverified">("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const filteredMembers = members.filter((member) => {
     const matchesSearch = Object.values(member).some((value) =>
@@ -296,6 +306,10 @@ const Members = () => {
 
     return matchesSearch && matchesStoreFilter && matchesVerification;
   });
+
+  const totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedMembers = filteredMembers.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <div className="p-8">
@@ -400,7 +414,7 @@ const Members = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredMembers.map((member) => (
+            {paginatedMembers.map((member) => (
               <TableRow key={member.id}>
                 <TableCell>
                   <Avatar>
@@ -494,6 +508,63 @@ const Members = () => {
             ))}
           </TableBody>
         </Table>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between">
+        <div className="text-sm text-gray-500">
+          Toplam {filteredMembers.length} üyeden {startIndex + 1}-{Math.min(startIndex + itemsPerPage, filteredMembers.length)} arası gösteriliyor
+        </div>
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              />
+            </PaginationItem>
+            
+            {currentPage > 2 && (
+              <PaginationItem>
+                <PaginationLink onClick={() => setCurrentPage(1)}>1</PaginationLink>
+              </PaginationItem>
+            )}
+            
+            {currentPage > 1 && (
+              <PaginationItem>
+                <PaginationLink onClick={() => setCurrentPage(currentPage - 1)}>
+                  {currentPage - 1}
+                </PaginationLink>
+              </PaginationItem>
+            )}
+            
+            <PaginationItem>
+              <PaginationLink isActive>{currentPage}</PaginationLink>
+            </PaginationItem>
+            
+            {currentPage < totalPages && (
+              <PaginationItem>
+                <PaginationLink onClick={() => setCurrentPage(currentPage + 1)}>
+                  {currentPage + 1}
+                </PaginationLink>
+              </PaginationItem>
+            )}
+            
+            {currentPage < totalPages - 1 && (
+              <PaginationItem>
+                <PaginationLink onClick={() => setCurrentPage(totalPages)}>
+                  {totalPages}
+                </PaginationLink>
+              </PaginationItem>
+            )}
+
+            <PaginationItem>
+              <PaginationNext 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   );
