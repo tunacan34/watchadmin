@@ -328,68 +328,54 @@ const Members = () => {
             />
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <Button 
-              variant={filter === "all" ? "default" : "outline"}
-              onClick={() => setFilter("all")}
-              size="sm"
-            >
-              Tümü
-            </Button>
-            <Button 
-              variant={filter === "store" ? "default" : "outline"}
-              onClick={() => setFilter("store")}
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <Store className="w-4 h-4" />
-              Mağaza
-            </Button>
-            <Button 
-              variant={filter === "member" ? "default" : "outline"}
-              onClick={() => setFilter("member")}
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <User className="w-4 h-4" />
-              Üye
-            </Button>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Button 
-              variant={verificationFilter === "all" ? "default" : "outline"}
-              onClick={() => setVerificationFilter("all")}
-              size="sm"
-            >
-              Tüm Doğrulamalar
-            </Button>
-            <Button 
-              variant={verificationFilter === "sms-tc" ? "default" : "outline"}
-              onClick={() => setVerificationFilter("sms-tc")}
-              size="sm"
-            >
-              SMS + TC
-            </Button>
-            <Button 
-              variant={verificationFilter === "sms" ? "default" : "outline"}
-              onClick={() => setVerificationFilter("sms")}
-              size="sm"
-            >
-              SMS
-            </Button>
-            <Button 
-              variant={verificationFilter === "tc" ? "default" : "outline"}
-              onClick={() => setVerificationFilter("tc")}
-              size="sm"
-            >
-              TC
-            </Button>
-            <Button 
-              variant={verificationFilter === "unverified" ? "default" : "outline"}
-              onClick={() => setVerificationFilter("unverified")}
-              size="sm"
-            >
-              Doğrulanmamış
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  {filter === "all" ? "Tümü" : filter === "store" ? "Mağaza" : "Üye"}
+                  <Store className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-48">
+                <DropdownMenuItem onClick={() => setFilter("all")} className="flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  Tümü
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilter("store")} className="flex items-center gap-2">
+                  <Store className="w-4 h-4" />
+                  Mağaza
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilter("member")} className="flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  Üye
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  Doğrulama Durumu
+                  <BadgeCheck className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <DropdownMenuItem onClick={() => setVerificationFilter("all")}>
+                  Tüm Doğrulamalar
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setVerificationFilter("sms-tc")}>
+                  SMS + TC
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setVerificationFilter("sms")}>
+                  SMS
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setVerificationFilter("tc")}>
+                  TC
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setVerificationFilter("unverified")}>
+                  Doğrulanmamış
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
         <Button className="shrink-0">

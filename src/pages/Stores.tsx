@@ -27,7 +27,6 @@ import { Store, Edit, Eye, Package, Search, Crown, } from "lucide-react";
 import { format, addMonths } from "date-fns";
 import { useState } from "react";
 
-// Örnek veri
 const stores = [
   ...Array.from({ length: 5 }, (_, i) => {
     const subscriptionDate = new Date(2024, 3, Math.floor(Math.random() * 30) + 1);
@@ -126,81 +125,67 @@ const Stores = () => {
       <h1 className="text-3xl font-semibold text-admin-foreground mb-8">MAĞAZALAR</h1>
       
       <div className="mb-6 flex flex-col gap-4">
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="relative max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-            <Input
-              type="search"
-              placeholder="Mağaza ara..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border-gray-200"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Button 
-              variant={storeType === "all" ? "default" : "outline"}
-              onClick={() => setStoreType("all")}
-              size="sm"
-            >
-              Tüm Mağazalar
-            </Button>
-            <Button 
-              variant={storeType === "premium" ? "default" : "outline"}
-              onClick={() => setStoreType("premium")}
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <Crown className="w-4 h-4" />
-              Premium
-            </Button>
-            <Button 
-              variant={storeType === "standard" ? "default" : "outline"}
-              onClick={() => setStoreType("standard")}
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <Store className="w-4 h-4" />
-              Standart
-            </Button>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button 
-              variant={storeStatus === "all" ? "default" : "outline"}
-              onClick={() => setStoreStatus("all")}
-              size="sm"
-            >
-              Tüm Durumlar
-            </Button>
-            <Button 
-              variant={storeStatus === "approved" ? "default" : "outline"}
-              onClick={() => setStoreStatus("approved")}
-              size="sm"
-            >
-              Onaylanmış
-            </Button>
-            <Button 
-              variant={storeStatus === "pending" ? "default" : "outline"}
-              onClick={() => setStoreStatus("pending")}
-              size="sm"
-            >
-              Onay Bekleyen
-            </Button>
-            <Button 
-              variant={storeStatus === "suspended" ? "default" : "outline"}
-              onClick={() => setStoreStatus("suspended")}
-              size="sm"
-            >
-              Askıya Alınmış
-            </Button>
-          </div>
-        </div>
-
         <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="relative max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <Input
+                type="search"
+                placeholder="Mağaza ara..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 border-gray-200"
+              />
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  {storeType === "all" ? "Tüm Mağazalar" : storeType === "premium" ? "Premium" : "Standart"}
+                  {storeType === "premium" ? <Crown className="ml-2 h-4 w-4" /> : <Store className="ml-2 h-4 w-4" />}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-48">
+                <DropdownMenuItem onClick={() => setStoreType("all")} className="flex items-center gap-2">
+                  <Store className="w-4 h-4" />
+                  Tüm Mağazalar
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStoreType("premium")} className="flex items-center gap-2">
+                  <Crown className="w-4 h-4" />
+                  Premium
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStoreType("standard")} className="flex items-center gap-2">
+                  <Store className="w-4 h-4" />
+                  Standart
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  {storeStatus === "all" ? "Tüm Durumlar" : 
+                   storeStatus === "approved" ? "Onaylanmış" :
+                   storeStatus === "pending" ? "Onay Bekleyen" : "Askıya Alınmış"}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-48">
+                <DropdownMenuItem onClick={() => setStoreStatus("all")}>
+                  Tüm Durumlar
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStoreStatus("approved")} className="text-green-600">
+                  Onaylanmış
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStoreStatus("pending")} className="text-yellow-600">
+                  Onay Bekleyen
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStoreStatus("suspended")} className="text-red-600">
+                  Askıya Alınmış
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          
           <Button 
             variant={showExpiringOnly ? "default" : "outline"}
             onClick={() => setShowExpiringOnly(!showExpiringOnly)}
@@ -208,56 +193,40 @@ const Stores = () => {
           >
             Aboneliği Bitecek Mağazalar (30 gün)
           </Button>
+        </div>
 
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Sırala:</span>
-              <Button 
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  if (sortField === "listings") {
-                    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-                  } else {
-                    setSortField("listings");
-                    setSortOrder("desc");
-                  }
-                }}
-                className="flex items-center gap-2"
-              >
-                İlan Sayısı {sortField === "listings" && (sortOrder === "asc" ? "↑" : "↓")}
-              </Button>
-              <Button 
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  if (sortField === "auctions") {
-                    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-                  } else {
-                    setSortField("auctions");
-                    setSortOrder("desc");
-                  }
-                }}
-                className="flex items-center gap-2"
-              >
-                Mezat Sayısı {sortField === "auctions" && (sortOrder === "asc" ? "↑" : "↓")}
-              </Button>
-              <Button 
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  if (sortField === "followers") {
-                    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-                  } else {
-                    setSortField("followers");
-                    setSortOrder("desc");
-                  }
-                }}
-                className="flex items-center gap-2"
-              >
-                Takipçi Sayısı {sortField === "followers" && (sortOrder === "asc" ? "↑" : "↓")}
-              </Button>
-            </div>
+            <span className="text-sm text-gray-500">Sırala:</span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  {sortField === "listings" ? "İlan Sayısı" : 
+                   sortField === "auctions" ? "Mezat Sayısı" : "Takipçi Sayısı"}
+                  {` ${sortOrder === "asc" ? "↑" : "↓"}`}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-48">
+                <DropdownMenuItem onClick={() => {
+                  setSortField("listings");
+                  setSortOrder(sortField === "listings" ? (sortOrder === "asc" ? "desc" : "asc") : "desc");
+                }}>
+                  İlan Sayısı {sortField === "listings" && (sortOrder === "asc" ? "↑" : "↓")}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {
+                  setSortField("auctions");
+                  setSortOrder(sortField === "auctions" ? (sortOrder === "asc" ? "desc" : "asc") : "desc");
+                }}>
+                  Mezat Sayısı {sortField === "auctions" && (sortOrder === "asc" ? "↑" : "↓")}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {
+                  setSortField("followers");
+                  setSortOrder(sortField === "followers" ? (sortOrder === "asc" ? "desc" : "asc") : "desc");
+                }}>
+                  Takipçi Sayısı {sortField === "followers" && (sortOrder === "asc" ? "↑" : "↓")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
