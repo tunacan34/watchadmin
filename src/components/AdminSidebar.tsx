@@ -11,11 +11,11 @@ import {
 } from "lucide-react";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "#dashboard" },
-  { icon: Users, label: "Users", href: "#users" },
-  { icon: Package, label: "Products", href: "#products" },
-  { icon: Mail, label: "Messages", href: "#messages" },
-  { icon: Settings, label: "Settings", href: "#settings" },
+  { icon: LayoutDashboard, label: "Kontrol Paneli", href: "#dashboard" },
+  { icon: Users, label: "Kullanıcılar", href: "#users" },
+  { icon: Package, label: "Ürünler", href: "#products" },
+  { icon: Mail, label: "Mesajlar", href: "#messages" },
+  { icon: Settings, label: "Ayarlar", href: "#settings" },
 ];
 
 export const AdminSidebar = () => {
@@ -40,7 +40,7 @@ export const AdminSidebar = () => {
       >
         <div className="p-6">
           <h2 className="text-2xl font-semibold text-admin-foreground mb-8">
-            Admin
+            Yönetici Paneli
           </h2>
           <nav>
             <ul className="space-y-4">
