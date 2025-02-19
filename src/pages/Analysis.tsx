@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -93,13 +94,16 @@ const Analysis = () => {
     0
   );
 
-  const lastMonthRevenue = monthlyRevenue[monthlyRevenue.length - 1].store + 
-    monthlyRevenue[monthlyRevenue.length - 1].booster;
+  // Son ay ve önceki ay verilerini güvenli bir şekilde al
+  const currentMonth = monthlyRevenue[monthlyRevenue.length - 1] || { store: 0, booster: 0 };
+  const previousMonth = monthlyRevenue[monthlyRevenue.length - 2] || { store: 0, booster: 0 };
 
-  const previousMonthRevenue = monthlyRevenue[monthlyRevenue.length - 2].store + 
-    monthlyRevenue[monthlyRevenue.length - 2].booster;
+  const lastMonthRevenue = currentMonth.store + currentMonth.booster;
+  const previousMonthRevenue = previousMonth.store + previousMonth.booster;
 
-  const growthRate = ((lastMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100;
+  const growthRate = previousMonthRevenue !== 0 
+    ? ((lastMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100 
+    : 0;
 
   const handlePeriodChange = (value: "1" | "3" | "6" | "12" | "custom") => {
     setPeriod(value);
@@ -157,7 +161,7 @@ const Analysis = () => {
           <CardContent>
             <div className="text-2xl font-bold">{formatPrice(totalRevenue)}</div>
             <p className="text-xs text-muted-foreground">
-              Son 6 ay toplam
+              Son {period === "custom" ? "seçilen dönem" : `${period} ay`} toplam
             </p>
           </CardContent>
         </Card>
@@ -188,7 +192,7 @@ const Analysis = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatPrice(monthlyRevenue[monthlyRevenue.length - 1].store)}
+              {formatPrice(currentMonth.store)}
             </div>
             <p className="text-xs text-muted-foreground">
               Bu ay
@@ -205,7 +209,7 @@ const Analysis = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {formatPrice(monthlyRevenue[monthlyRevenue.length - 1].booster)}
+              {formatPrice(currentMonth.booster)}
             </div>
             <p className="text-xs text-muted-foreground">
               Bu ay
@@ -217,7 +221,7 @@ const Analysis = () => {
       <Card>
         <CardHeader>
           <CardTitle>Aylık Gelir Analizi</CardTitle>
-          <CardDescription>Son 6 aylık mağaza ve doping gelirleri</CardDescription>
+          <CardDescription>Son {period === "custom" ? "seçilen dönem" : `${period} ay`} mağaza ve doping gelirleri</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[400px]">
