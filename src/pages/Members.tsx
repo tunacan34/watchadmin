@@ -28,7 +28,7 @@ const members = [
     email: "ahmet.yilmaz@email.com",
     phone: "+90 532 123 4567",
     city: "İstanbul",
-    store: "Yılmaz Electronics",
+    store: "Yılmaz Saat",
     joinDate: new Date("2024-01-15"),
   },
   {
@@ -48,7 +48,7 @@ const members = [
     email: "mehmet.kaya@email.com",
     phone: "+90 535 345 6789",
     city: "İzmir",
-    store: "Kaya Market",
+    store: "Kaya Saat",
     joinDate: new Date("2024-02-15"),
   },
   {
@@ -68,7 +68,7 @@ const members = [
     email: "mustafa.sahin@email.com",
     phone: "+90 537 567 8901",
     city: "Antalya",
-    store: "Şahin Ticaret",
+    store: "Şahin Saat",
     joinDate: new Date("2024-03-15"),
   },
   {
@@ -88,7 +88,7 @@ const members = [
     email: "ali.ozturk@email.com",
     phone: "+90 539 789 0123",
     city: "Ankara",
-    store: "Öztürk Mağazası",
+    store: "Öztürk Saat",
     joinDate: new Date("2024-03-25"),
   },
   {
@@ -108,7 +108,7 @@ const members = [
     email: "can.aydin@email.com",
     phone: "+90 533 901 2345",
     city: "Bursa",
-    store: "Aydın Shop",
+    store: "Aydın Saat",
     joinDate: new Date("2024-04-05"),
   },
   {
