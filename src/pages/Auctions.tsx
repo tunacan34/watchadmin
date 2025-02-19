@@ -190,9 +190,20 @@ const getSellerInfo = (seller: { name: string; isStore: boolean; storeType: Stor
 };
 
 const sortAuctions = (auctions: Auction[], field: SortField, order: SortOrder) => {
-  if (!field) return auctions;
+  let sortedAuctions = [...auctions];
 
-  return [...auctions].sort((a, b) => {
+  // Önce aktif mezatları en üste al ve kalan süreye göre sırala
+  sortedAuctions.sort((a, b) => {
+    // İlk önce aktif durumları kontrol et
+    if (a.status === "active" && b.status !== "active") return -1;
+    if (a.status !== "active" && b.status === "active") return 1;
+
+    // Eğer her ikisi de aktifse, kalan süreye göre sırala
+    if (a.status === "active" && b.status === "active") {
+      return a.endDate.getTime() - b.endDate.getTime();
+    }
+
+    // Aktif olmayanlar için normal sıralama
     if (field === "timeLeft") {
       const diff = a.endDate.getTime() - b.endDate.getTime();
       return order === "asc" ? diff : -diff;
@@ -201,8 +212,18 @@ const sortAuctions = (auctions: Auction[], field: SortField, order: SortOrder) =
       const diff = a.totalBids - b.totalBids;
       return order === "asc" ? diff : -diff;
     }
-    return 0;
+
+    // Varsayılan olarak durum sıralaması
+    const statusOrder = {
+      active: 0,
+      paused: 1,
+      completed: 2,
+      cancelled: 3
+    };
+    return statusOrder[a.status] - statusOrder[b.status];
   });
+
+  return sortedAuctions;
 };
 
 const Auctions = () => {
