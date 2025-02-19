@@ -63,13 +63,39 @@ const generateDummyAuctions = (): Auction[] => {
 
   return Array.from({ length: 50 }, (_, index) => {
     const isStore = Math.random() > 0.5;
-    const status: AuctionStatus[] = ["active", "completed", "cancelled", "paused"];
-    const randomStatus = status[Math.floor(Math.random() * status.length)];
-    const startDate = subDays(now, Math.floor(Math.random() * 10));
-    const isShortDuration = Math.random() > 0.7;
-    const endDate = isShortDuration 
-      ? addDays(now, Math.random()) // 1 günden az
-      : addDays(startDate, Math.floor(Math.random() * 30) + 1);
+    
+    const statusRandom = Math.random();
+    let status: AuctionStatus;
+    if (statusRandom < 0.5) { // %50 aktif
+      status = "active";
+    } else if (statusRandom < 0.8) { // %30 tamamlanmış
+      status = "completed";
+    } else if (statusRandom < 0.9) { // %10 durdurulmuş
+      status = "paused";
+    } else { // %10 iptal edilmiş
+      status = "cancelled";
+    }
+
+    let startDate: Date;
+    let endDate: Date;
+
+    if (status === "completed") {
+      startDate = subDays(now, Math.floor(Math.random() * 30) + 15); // 15-45 gün önce başlamış
+      endDate = subDays(now, Math.floor(Math.random() * 14)); // 1-14 gün önce bitmiş
+    } else if (status === "active") {
+      const isShortDuration = Math.random() > 0.7;
+      if (isShortDuration) {
+        startDate = subDays(now, Math.floor(Math.random() * 3)); // 0-3 gün önce başlamış
+        endDate = addDays(now, Math.random()); // 0-24 saat içinde bitecek
+      } else {
+        startDate = subDays(now, Math.floor(Math.random() * 5)); // 0-5 gün önce başlamış
+        endDate = addDays(now, Math.floor(Math.random() * 14) + 1); // 1-15 gün içinde bitecek
+      }
+    } else {
+      startDate = subDays(now, Math.floor(Math.random() * 10)); // 0-10 gün önce başlamış
+      endDate = addDays(now, Math.floor(Math.random() * 20)); // 0-20 gün içinde bitecek (normal şartlarda)
+    }
+
     const startingPrice = Math.floor(Math.random() * 900000) + 100000;
     const currentBid = startingPrice + Math.floor(Math.random() * 200000);
 
@@ -92,7 +118,7 @@ const generateDummyAuctions = (): Auction[] => {
       startingPrice,
       currentBid,
       totalBids: Math.floor(Math.random() * 20),
-      status: randomStatus,
+      status,
       favorites: Math.floor(Math.random() * 50),
     };
   });
@@ -295,10 +321,10 @@ const Auctions = () => {
                 Tamamlanan
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setStatusFilter("cancelled")}>
-                İptal Edilen
+                İptal Edildi
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setStatusFilter("paused")}>
-                Durdurulan
+                Durduruldu
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
