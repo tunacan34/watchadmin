@@ -20,6 +20,7 @@ import {
   Settings,
   LineChart,
   AlertTriangle,
+  Bell,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -40,6 +41,7 @@ const menuItems = [
   { icon: MessageSquare, label: "DESTEK TALEPLERİ", href: "/support" },
   { icon: MessageCircle, label: "YORUMLAR", href: "/comments" },
   { icon: AlertTriangle, label: "ŞÜPHELİ İLANLAR", href: "/reports" },
+  { icon: Bell, label: "BİLDİRİMLER", href: "/notifications" },
   { icon: Settings, label: "AYARLAR", href: "/settings" },
 ];
 
