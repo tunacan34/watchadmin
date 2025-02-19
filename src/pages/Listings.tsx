@@ -28,6 +28,8 @@ import { format } from "date-fns";
 import { useState } from "react";
 
 type ListingStatus = "active" | "pending" | "rejected" | "inactive" | "sold";
+type SortField = "price" | "views" | "favorites" | "date";
+type SortDirection = "asc" | "desc";
 
 interface Listing {
   id: number;
@@ -133,7 +135,7 @@ const Listings = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<ListingStatus | "all">("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortField, setSortField] = useState<SortField>("price");
+  const [sortField, setSortField] = useState<SortField>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const itemsPerPage = 10;
 
@@ -156,6 +158,11 @@ const Listings = () => {
     })
     .sort((a, b) => {
       const multiplier = sortDirection === "asc" ? 1 : -1;
+      
+      if (sortField === "date") {
+        return multiplier * (a.createdAt.getTime() - b.createdAt.getTime());
+      }
+      
       return multiplier * (a[sortField] - b[sortField]);
     });
 
@@ -257,6 +264,14 @@ const Listings = () => {
         </div>
 
         <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => toggleSort("date")}
+            className={sortField === "date" ? "bg-muted" : ""}
+          >
+            Eklenme Tarihi {sortField === "date" && (sortDirection === "asc" ? "↑" : "↓")}
+          </Button>
           <Button
             variant="outline"
             size="sm"
