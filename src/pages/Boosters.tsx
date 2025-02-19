@@ -9,12 +9,25 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Plus } from "lucide-react";
+import { Plus, Package } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
+interface Booster {
+  id: string;
+  name: string;
+  description: string;
+  listingCount: number;
+  promoCount: number;
+  duration: number;
+  price: number;
+  type: string;
+  userType: string;
+}
+
 const Boosters = () => {
+  const [boosters, setBoosters] = useState<Booster[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -22,9 +35,10 @@ const Boosters = () => {
     promoCount: 0,
     duration: 0,
     price: 0,
-    type: "listing", // listing, showcase, search, auction
-    userType: "member", // member, standard_store
+    type: "listing",
+    userType: "member",
   });
+  const [open, setOpen] = useState(false);
 
   const totalListingCount = formData.listingCount + formData.promoCount;
 
@@ -37,8 +51,23 @@ const Boosters = () => {
   };
 
   const handleSubmit = () => {
-    console.log("Form data:", formData);
-    // TODO: API call to save booster
+    const newBooster: Booster = {
+      id: Date.now().toString(), // Geçici ID oluşturma
+      ...formData
+    };
+    
+    setBoosters(prev => [...prev, newBooster]);
+    setFormData({
+      name: "",
+      description: "",
+      listingCount: 0,
+      promoCount: 0,
+      duration: 0,
+      price: 0,
+      type: "listing",
+      userType: "member",
+    });
+    setOpen(false);
   };
 
   return (
@@ -46,7 +75,7 @@ const Boosters = () => {
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-semibold text-admin-foreground">DOPINGLER</h1>
         
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
@@ -163,6 +192,57 @@ const Boosters = () => {
             </div>
           </DialogContent>
         </Dialog>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {boosters.map((booster) => (
+          <div 
+            key={booster.id}
+            className="p-6 rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center gap-4 mb-4">
+              <div className="p-2 rounded-full bg-primary/10">
+                <Package className="w-6 h-6 text-primary" />
+              </div>
+              <div>
+                <h3 className="font-semibold">{booster.name}</h3>
+                <p className="text-sm text-muted-foreground">{booster.description}</p>
+              </div>
+            </div>
+            
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between text-sm">
+                <span>İlan Adeti:</span>
+                <span className="font-medium">{booster.listingCount}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Promosyon İlan:</span>
+                <span className="font-medium">{booster.promoCount}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Toplam İlan:</span>
+                <span className="font-medium">{booster.listingCount + booster.promoCount}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Süre:</span>
+                <span className="font-medium">{booster.duration} gün</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span>Hedef Kullanıcı:</span>
+                <span className="font-medium">
+                  {booster.userType === "member" ? "Normal Üye" : "Standart Mağaza"}
+                </span>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t">
+              <div className="flex justify-between items-center">
+                <span className="text-2xl font-semibold">₺{booster.price}</span>
+                <Button variant="outline" size="sm">Düzenle</Button>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
