@@ -1,3 +1,4 @@
+
 import {
   Table,
   TableBody,
@@ -15,7 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, User, Eye, Bell, Pause, Search, Edit, RotateCcw, Send, UserPlus, Store, Crown } from "lucide-react";
+import { MoreHorizontal, User, Eye, Bell, Pause, Search, Edit, RotateCcw, Send, UserPlus, Store, Crown, BadgeCheck } from "lucide-react";
 import { format } from "date-fns";
 import { useState } from "react";
 
@@ -29,6 +30,7 @@ const members = [
     city: "İstanbul",
     store: "Yılmaz Saat",
     storeType: "premium",
+    verified: true,
     joinDate: new Date("2024-01-15"),
   },
   {
@@ -40,6 +42,7 @@ const members = [
     city: "Ankara",
     store: null,
     storeType: null,
+    verified: true,
     joinDate: new Date("2024-02-01"),
   },
   {
@@ -51,6 +54,7 @@ const members = [
     city: "İzmir",
     store: "Kaya Saat",
     storeType: "standard",
+    verified: true,
     joinDate: new Date("2024-02-15"),
   },
   {
@@ -62,6 +66,7 @@ const members = [
     city: "Bursa",
     store: null,
     storeType: null,
+    verified: false,
     joinDate: new Date("2024-03-01"),
   },
   {
@@ -73,6 +78,7 @@ const members = [
     city: "Antalya",
     store: "Şahin Saat",
     storeType: "premium",
+    verified: true,
     joinDate: new Date("2024-03-15"),
   },
   {
@@ -84,6 +90,7 @@ const members = [
     city: "İstanbul",
     store: null,
     storeType: null,
+    verified: false,
     joinDate: new Date("2024-03-20"),
   },
   {
@@ -95,6 +102,7 @@ const members = [
     city: "Ankara",
     store: "Öztürk Saat",
     storeType: "standard",
+    verified: true,
     joinDate: new Date("2024-03-25"),
   },
   {
@@ -106,6 +114,7 @@ const members = [
     city: "İzmir",
     store: null,
     storeType: null,
+    verified: true,
     joinDate: new Date("2024-04-01"),
   },
   {
@@ -117,6 +126,7 @@ const members = [
     city: "Bursa",
     store: "Aydın Saat",
     storeType: "premium",
+    verified: true,
     joinDate: new Date("2024-04-05"),
   },
   {
@@ -128,7 +138,129 @@ const members = [
     city: "Antalya",
     store: null,
     storeType: null,
+    verified: false,
     joinDate: new Date("2024-04-10"),
+  },
+  // 10 yeni üye ekleniyor
+  {
+    id: 11,
+    avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
+    fullName: "Kemal Yıldırım",
+    email: "kemal.yildirim@email.com",
+    phone: "+90 532 111 2233",
+    city: "İzmir",
+    store: "Yıldırım Saat",
+    storeType: "premium",
+    verified: true,
+    joinDate: new Date("2024-04-15"),
+  },
+  {
+    id: 12,
+    avatar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+    fullName: "Esra Kara",
+    email: "esra.kara@email.com",
+    phone: "+90 533 222 3344",
+    city: "Ankara",
+    store: null,
+    storeType: null,
+    verified: false,
+    joinDate: new Date("2024-04-16"),
+  },
+  {
+    id: 13,
+    avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952",
+    fullName: "Burak Özdemir",
+    email: "burak.ozdemir@email.com",
+    phone: "+90 535 333 4455",
+    city: "İstanbul",
+    store: "Özdemir Saat",
+    storeType: "standard",
+    verified: true,
+    joinDate: new Date("2024-04-17"),
+  },
+  {
+    id: 14,
+    avatar: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e",
+    fullName: "Deniz Avcı",
+    email: "deniz.avci@email.com",
+    phone: "+90 536 444 5566",
+    city: "Antalya",
+    store: null,
+    storeType: null,
+    verified: true,
+    joinDate: new Date("2024-04-18"),
+  },
+  {
+    id: 15,
+    avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
+    fullName: "Ceren Yalçın",
+    email: "ceren.yalcin@email.com",
+    phone: "+90 537 555 6677",
+    city: "Bursa",
+    store: "Yalçın Saat",
+    storeType: "premium",
+    verified: true,
+    joinDate: new Date("2024-04-19"),
+  },
+  {
+    id: 16,
+    avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
+    fullName: "Mert Aslan",
+    email: "mert.aslan@email.com",
+    phone: "+90 538 666 7788",
+    city: "İzmir",
+    store: null,
+    storeType: null,
+    verified: false,
+    joinDate: new Date("2024-04-20"),
+  },
+  {
+    id: 17,
+    avatar: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+    fullName: "Gizem Çetin",
+    email: "gizem.cetin@email.com",
+    phone: "+90 539 777 8899",
+    city: "Ankara",
+    store: "Çetin Saat",
+    storeType: "standard",
+    verified: true,
+    joinDate: new Date("2024-04-21"),
+  },
+  {
+    id: 18,
+    avatar: "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952",
+    fullName: "Okan Kurt",
+    email: "okan.kurt@email.com",
+    phone: "+90 532 888 9900",
+    city: "İstanbul",
+    store: null,
+    storeType: null,
+    verified: true,
+    joinDate: new Date("2024-04-22"),
+  },
+  {
+    id: 19,
+    avatar: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e",
+    fullName: "İrem Güneş",
+    email: "irem.gunes@email.com",
+    phone: "+90 533 999 0011",
+    city: "Antalya",
+    store: "Güneş Saat",
+    storeType: "premium",
+    verified: true,
+    joinDate: new Date("2024-04-23"),
+  },
+  {
+    id: 20,
+    avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
+    fullName: "Berkay Yaman",
+    email: "berkay.yaman@email.com",
+    phone: "+90 535 000 1122",
+    city: "Bursa",
+    store: null,
+    storeType: null,
+    verified: false,
+    joinDate: new Date("2024-04-24"),
   },
 ];
 
@@ -212,6 +344,7 @@ const Members = () => {
               <TableHead>Şehir</TableHead>
               <TableHead>Mağaza</TableHead>
               <TableHead>Üyelik Tarihi</TableHead>
+              <TableHead>Durum</TableHead>
               <TableHead className="text-right">İşlemler</TableHead>
             </TableRow>
           </TableHeader>
@@ -256,6 +389,16 @@ const Members = () => {
                   )}
                 </TableCell>
                 <TableCell>{format(member.joinDate, 'dd.MM.yyyy')}</TableCell>
+                <TableCell>
+                  {member.verified ? (
+                    <div className="flex items-center gap-1 text-green-600">
+                      <BadgeCheck className="w-4 h-4" />
+                      <span className="text-sm font-medium">Doğrulanmış</span>
+                    </div>
+                  ) : (
+                    <span className="text-sm text-gray-500">Doğrulanmamış</span>
+                  )}
+                </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
