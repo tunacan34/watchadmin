@@ -125,27 +125,68 @@ const members = [
 
 const Members = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState<"all" | "store" | "member">("all");
 
-  const filteredMembers = members.filter((member) =>
-    Object.values(member).some((value) =>
+  const filteredMembers = members.filter((member) => {
+    // Önce arama filtresini uygula
+    const matchesSearch = Object.values(member).some((value) =>
       value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
+    );
+
+    // Sonra mağaza filtresini uygula
+    switch (filter) {
+      case "store":
+        return matchesSearch && member.store !== null;
+      case "member":
+        return matchesSearch && member.store === null;
+      default:
+        return matchesSearch;
+    }
+  });
 
   return (
     <div className="p-8">
       <h1 className="text-3xl font-semibold text-admin-foreground mb-8">ÜYELER</h1>
       
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-          <Input
-            type="search"
-            placeholder="Üye ara..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 border-gray-200"
-          />
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <div className="relative max-w-sm">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <Input
+              type="search"
+              placeholder="Üye ara..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 border-gray-200"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant={filter === "all" ? "default" : "outline"}
+              onClick={() => setFilter("all")}
+              size="sm"
+            >
+              Tümü
+            </Button>
+            <Button 
+              variant={filter === "store" ? "default" : "outline"}
+              onClick={() => setFilter("store")}
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Store className="w-4 h-4" />
+              Mağaza
+            </Button>
+            <Button 
+              variant={filter === "member" ? "default" : "outline"}
+              onClick={() => setFilter("member")}
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <User className="w-4 h-4" />
+              Üye
+            </Button>
+          </div>
         </div>
         <Button className="shrink-0">
           <UserPlus className="w-4 h-4 mr-2" />
