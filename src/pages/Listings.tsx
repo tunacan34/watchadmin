@@ -15,7 +15,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Edit, Eye, CheckCircle, Search, Filter } from "lucide-react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Edit, Eye, CheckCircle, Search, Filter, MoreHorizontal, Archive, Ban, Power, CheckSquare } from "lucide-react";
 import { format } from "date-fns";
 import { useState } from "react";
 
@@ -124,6 +133,19 @@ const getStatusBadge = (status: ListingStatus) => {
 const Listings = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<ListingStatus | "all">("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // İstatistikler için hesaplama
+  const stats = {
+    pending: listings.filter(l => l.status === "pending").length,
+    active: listings.filter(l => l.status === "active").length,
+    sold: listings.filter(l => l.status === "sold").length,
+    inactive: listings.filter(l => l.status === "inactive").length,
+    rejected: listings.filter(l => l.status === "rejected").length,
+    store: listings.filter(l => l.isStore).length,
+    member: listings.filter(l => !l.isStore).length,
+  };
 
   const filteredListings = listings.filter(listing => {
     const matchesSearch = listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -132,11 +154,57 @@ const Listings = () => {
     return matchesSearch && matchesStatus;
   });
 
+  // Sayfalandırma için veri kırpma
+  const pageCount = Math.ceil(filteredListings.length / itemsPerPage);
+  const paginatedListings = filteredListings.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Sayfa değiştirme işlevi
+  const changePage = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="p-8">
       <h1 className="text-3xl font-semibold text-admin-foreground mb-8">İLANLAR</h1>
 
       <div className="flex flex-col gap-6">
+        {/* İstatistik Kartları */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
+          <div className="bg-yellow-50 border border-yellow-100 rounded-lg p-4">
+            <div className="text-yellow-800 font-medium">Onay Bekleyen</div>
+            <div className="text-2xl font-bold text-yellow-900">{stats.pending}</div>
+          </div>
+          <div className="bg-green-50 border border-green-100 rounded-lg p-4">
+            <div className="text-green-800 font-medium">Yayında</div>
+            <div className="text-2xl font-bold text-green-900">{stats.active}</div>
+          </div>
+          <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
+            <div className="text-blue-800 font-medium">Satıldı</div>
+            <div className="text-2xl font-bold text-blue-900">{stats.sold}</div>
+          </div>
+          <div className="bg-gray-50 border border-gray-100 rounded-lg p-4">
+            <div className="text-gray-800 font-medium">Pasif</div>
+            <div className="text-2xl font-bold text-gray-900">{stats.inactive}</div>
+          </div>
+          <div className="bg-red-50 border border-red-100 rounded-lg p-4">
+            <div className="text-red-800 font-medium">Red</div>
+            <div className="text-2xl font-bold text-red-900">{stats.rejected}</div>
+          </div>
+          <div className="bg-purple-50 border border-purple-100 rounded-lg p-4">
+            <div className="text-purple-800 font-medium">Mağaza İlanı</div>
+            <div className="text-2xl font-bold text-purple-900">{stats.store}</div>
+          </div>
+          <div className="bg-indigo-50 border border-indigo-100 rounded-lg p-4">
+            <div className="text-indigo-800 font-medium">Üye İlanı</div>
+            <div className="text-2xl font-bold text-indigo-900">{stats.member}</div>
+          </div>
+        </div>
+
+        {/* Arama ve Filtreleme */}
         <div className="flex flex-wrap items-center gap-4">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -178,6 +246,7 @@ const Listings = () => {
           </DropdownMenu>
         </div>
 
+        {/* Tablo */}
         <div className="rounded-lg border">
           <Table>
             <TableHeader>
@@ -193,7 +262,7 @@ const Listings = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredListings.map((listing) => (
+              {paginatedListings.map((listing) => (
                 <TableRow key={listing.id}>
                   <TableCell>
                     <img
@@ -231,12 +300,47 @@ const Listings = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="icon">
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button variant="outline" size="icon">
-                        <Eye className="w-4 h-4" />
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" size="icon">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Edit className="w-4 h-4 mr-2" />
+                            Düzenle
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Eye className="w-4 h-4 mr-2" />
+                            İncele
+                          </DropdownMenuItem>
+                          {listing.status === "active" && (
+                            <DropdownMenuItem>
+                              <Archive className="w-4 h-4 mr-2" />
+                              Pasife Al
+                            </DropdownMenuItem>
+                          )}
+                          {listing.status === "pending" && (
+                            <>
+                              <DropdownMenuItem>
+                                <CheckSquare className="w-4 h-4 mr-2" />
+                                Onayla
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="text-red-600">
+                                <Ban className="w-4 h-4 mr-2" />
+                                Reddet
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                          {listing.status === "inactive" && (
+                            <DropdownMenuItem>
+                              <Power className="w-4 h-4 mr-2" />
+                              Aktife Al
+                            </DropdownMenuItem>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                       {listing.status === "pending" && (
                         <Button variant="outline" size="icon" className="text-green-600 hover:text-green-700">
                           <CheckCircle className="w-4 h-4" />
@@ -249,6 +353,44 @@ const Listings = () => {
             </TableBody>
           </Table>
         </div>
+
+        {/* Sayfalandırma */}
+        {pageCount > 1 && (
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious onClick={() => changePage(Math.max(1, currentPage - 1))} />
+              </PaginationItem>
+              {Array.from({ length: pageCount }, (_, i) => i + 1).map((page) => {
+                if (
+                  page === 1 ||
+                  page === pageCount ||
+                  (page >= currentPage - 1 && page <= currentPage + 1)
+                ) {
+                  return (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => changePage(page)}
+                        isActive={currentPage === page}
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  );
+                } else if (
+                  page === currentPage - 2 ||
+                  page === currentPage + 2
+                ) {
+                  return <PaginationEllipsis key={page} />;
+                }
+                return null;
+              })}
+              <PaginationItem>
+                <PaginationNext onClick={() => changePage(Math.min(pageCount, currentPage + 1))} />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
       </div>
     </div>
   );
