@@ -101,6 +101,30 @@ const Statistics = () => {
     },
   ];
 
+  const popularListings = [
+    { id: 1, title: "Rolex Daytona 2024", views: 12500, favorites: 450, price: 1250000 },
+    { id: 2, title: "Patek Philippe Nautilus", views: 11200, favorites: 380, price: 2350000 },
+    { id: 3, title: "Audemars Piguet Royal Oak", views: 9800, favorites: 320, price: 1850000 },
+    { id: 4, title: "Cartier Santos 2023", views: 8900, favorites: 290, price: 450000 },
+    { id: 5, title: "Omega Speedmaster", views: 8200, favorites: 275, price: 350000 },
+  ];
+
+  const popularAuctions = [
+    { id: 1, title: "Vintage Rolex Collection", currentBid: 850000, bidCount: 45, endTime: "2 saat" },
+    { id: 2, title: "Limited Edition AP", currentBid: 1250000, bidCount: 38, endTime: "5 saat" },
+    { id: 3, title: "Rare Patek Philippe", currentBid: 2100000, bidCount: 32, endTime: "12 saat" },
+    { id: 4, title: "Classic Vacheron", currentBid: 950000, bidCount: 28, endTime: "1 gün" },
+    { id: 5, title: "Special IWC Set", currentBid: 750000, bidCount: 25, endTime: "2 gün" },
+  ];
+
+  const topStores = [
+    { id: 1, name: "Luxury Watch Store", followers: 12500, rating: 4.9, totalSales: 450 },
+    { id: 2, name: "VIP Timepieces", followers: 11200, rating: 4.8, totalSales: 380 },
+    { id: 3, name: "Elite Watches", followers: 9800, rating: 4.9, totalSales: 320 },
+    { id: 4, name: "Premium Time", followers: 8900, rating: 4.7, totalSales: 290 },
+    { id: 5, name: "Watch Masters", followers: 8200, rating: 4.8, totalSales: 275 },
+  ];
+
   const handlePeriodChange = (value: "1" | "3" | "6" | "12" | "custom") => {
     setPeriod(value);
     if (value !== "custom") {
@@ -262,6 +286,77 @@ const Statistics = () => {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <PackageSearch className="w-4 h-4" />
+              Popüler İlanlar
+            </CardTitle>
+            <CardDescription className="text-xs">En çok görüntülenen ilanlar</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {popularListings.map((listing) => (
+              <div key={listing.id} className="flex items-start justify-between border-b pb-2 last:border-0 last:pb-0">
+                <div>
+                  <p className="font-medium text-sm">{listing.title}</p>
+                  <div className="text-xs text-muted-foreground">
+                    {listing.views.toLocaleString()} görüntülenme · {listing.favorites} favori
+                  </div>
+                </div>
+                <div className="font-semibold text-sm">{listing.price.toLocaleString()} ₺</div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Gavel className="w-4 h-4" />
+              Popüler Mezatlar
+            </CardTitle>
+            <CardDescription className="text-xs">En çok teklif alan mezatlar</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {popularAuctions.map((auction) => (
+              <div key={auction.id} className="flex items-start justify-between border-b pb-2 last:border-0 last:pb-0">
+                <div>
+                  <p className="font-medium text-sm">{auction.title}</p>
+                  <div className="text-xs text-muted-foreground">
+                    {auction.bidCount} teklif · {auction.endTime} kaldı
+                  </div>
+                </div>
+                <div className="font-semibold text-sm">{auction.currentBid.toLocaleString()} ₺</div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Store className="w-4 h-4" />
+              En Çok Takip Edilen Mağazalar
+            </CardTitle>
+            <CardDescription className="text-xs">En popüler mağazalar</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {topStores.map((store) => (
+              <div key={store.id} className="flex items-start justify-between border-b pb-2 last:border-0 last:pb-0">
+                <div>
+                  <p className="font-medium text-sm">{store.name}</p>
+                  <div className="text-xs text-muted-foreground">
+                    {store.followers.toLocaleString()} takipçi · {store.rating} puan
+                  </div>
+                </div>
+                <div className="font-semibold text-sm">{store.totalSales} satış</div>
+              </div>
+            ))}
           </CardContent>
         </Card>
       </div>
