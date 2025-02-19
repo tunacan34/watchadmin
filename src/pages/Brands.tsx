@@ -17,8 +17,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronRight, Plus, Search } from "lucide-react";
+import { ChevronRight, Plus, Search, Image } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 interface SubModel {
   id: string;
@@ -28,6 +29,7 @@ interface SubModel {
 interface Brand {
   id: string;
   name: string;
+  logoUrl?: string;
   subModels: SubModel[];
 }
 
@@ -37,6 +39,7 @@ const Brands = () => {
     {
       id: "1",
       name: "Rolex",
+      logoUrl: "https://example.com/rolex-logo.png",
       subModels: [
         { id: "1-1", name: "Daytona" },
         { id: "1-2", name: "Submariner" },
@@ -54,6 +57,7 @@ const Brands = () => {
     {
       id: "3",
       name: "Audemars Piguet",
+      logoUrl: "https://example.com/ap-logo.png",
       subModels: [
         { id: "3-1", name: "Royal Oak" },
         { id: "3-2", name: "Code 11.59" }
@@ -64,6 +68,7 @@ const Brands = () => {
   const [brands, setBrands] = useState<Brand[]>(initialBrands);
   const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
   const [newBrandName, setNewBrandName] = useState("");
+  const [newBrandLogo, setNewBrandLogo] = useState("");
   const [newModels, setNewModels] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddingModels, setIsAddingModels] = useState(false);
@@ -77,10 +82,12 @@ const Brands = () => {
       const newBrand: Brand = {
         id: `${brands.length + 1}`,
         name: newBrandName,
+        logoUrl: newBrandLogo.trim() || undefined,
         subModels: []
       };
       setBrands([...brands, newBrand]);
       setNewBrandName("");
+      setNewBrandLogo("");
     }
   };
 
@@ -138,6 +145,15 @@ const Brands = () => {
                   placeholder="Marka adını giriniz"
                 />
               </div>
+              <div className="grid gap-2">
+                <Label htmlFor="logo">Logo URL (Opsiyonel)</Label>
+                <Input
+                  id="logo"
+                  value={newBrandLogo}
+                  onChange={(e) => setNewBrandLogo(e.target.value)}
+                  placeholder="Logo URL'sini giriniz"
+                />
+              </div>
               <Button onClick={handleAddBrand}>Ekle</Button>
             </div>
           </DialogContent>
@@ -168,7 +184,10 @@ const Brands = () => {
                   className="w-full justify-start rounded-none border-b last:border-0"
                   onClick={() => setSelectedBrand(brand)}
                 >
-                  <ChevronRight className="w-4 h-4 mr-2" />
+                  <Avatar className="h-6 w-6 mr-2">
+                    <AvatarImage src={brand.logoUrl} alt={brand.name} />
+                    <AvatarFallback className="text-xs">{brand.name.substring(0, 2)}</AvatarFallback>
+                  </Avatar>
                   {brand.name}
                 </Button>
               ))}
@@ -180,7 +199,13 @@ const Brands = () => {
         {selectedBrand && (
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-              <CardTitle className="text-lg">{selectedBrand.name} Modelleri</CardTitle>
+              <div className="flex items-center gap-3">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={selectedBrand.logoUrl} alt={selectedBrand.name} />
+                  <AvatarFallback className="text-sm">{selectedBrand.name.substring(0, 2)}</AvatarFallback>
+                </Avatar>
+                <CardTitle className="text-lg">{selectedBrand.name} Modelleri</CardTitle>
+              </div>
               {!isAddingModels && (
                 <Button 
                   variant="outline" 
