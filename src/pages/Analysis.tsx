@@ -1,4 +1,3 @@
-
 import {
   Card,
   CardContent,
@@ -23,7 +22,6 @@ import {
 } from "recharts";
 
 const Analysis = () => {
-  // Son 6 ayın gelir verileri
   const monthlyRevenue = [
     { month: "Ekim", store: 25000, booster: 18000 },
     { month: "Kasım", store: 28000, booster: 22000 },
@@ -33,18 +31,19 @@ const Analysis = () => {
     { month: "Mart", store: 45000, booster: 38000 },
   ];
 
-  // Doping türlerine göre dağılım
   const boosterDistribution = [
-    { name: "İlan Paketi", value: 45 },
-    { name: "Vitrin", value: 30 },
-    { name: "Arama", value: 25 },
+    { name: "İlan Paketi", value: 45, amount: 450000 },
+    { name: "Vitrin", value: 30, amount: 300000 },
+    { name: "Arama", value: 25, amount: 250000 },
   ];
 
-  // Mağaza türlerine göre dağılım
   const storeDistribution = [
-    { name: "Standart", value: 70 },
-    { name: "Premium", value: 30 },
+    { name: "Standart", value: 70, amount: 700000 },
+    { name: "Premium", value: 30, amount: 300000 },
   ];
+
+  const totalBoosterAmount = boosterDistribution.reduce((sum, item) => sum + item.amount, 0);
+  const totalStoreAmount = storeDistribution.reduce((sum, item) => sum + item.amount, 0);
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
 
@@ -55,28 +54,23 @@ const Analysis = () => {
     }).format(value);
   };
 
-  // Toplam gelir hesaplama
   const totalRevenue = monthlyRevenue.reduce(
     (acc, curr) => acc + curr.store + curr.booster,
     0
   );
 
-  // Son ay geliri
   const lastMonthRevenue = monthlyRevenue[monthlyRevenue.length - 1].store + 
     monthlyRevenue[monthlyRevenue.length - 1].booster;
 
-  // Bir önceki ay geliri
   const previousMonthRevenue = monthlyRevenue[monthlyRevenue.length - 2].store + 
     monthlyRevenue[monthlyRevenue.length - 2].booster;
 
-  // Büyüme oranı
   const growthRate = ((lastMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100;
 
   return (
     <div className="p-8 space-y-8">
       <h1 className="text-3xl font-semibold text-admin-foreground mb-6">ANALİZ</h1>
 
-      {/* Özet Kartları */}
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -145,7 +139,6 @@ const Analysis = () => {
         </Card>
       </div>
 
-      {/* Gelir Grafiği */}
       <Card>
         <CardHeader>
           <CardTitle>Aylık Gelir Analizi</CardTitle>
@@ -170,11 +163,15 @@ const Analysis = () => {
         </CardContent>
       </Card>
 
-      {/* Dağılım Grafikleri */}
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Doping Dağılımı</CardTitle>
+            <CardTitle className="flex justify-between items-center">
+              <span>Doping Dağılımı</span>
+              <span className="text-lg font-normal text-muted-foreground">
+                Toplam: {formatPrice(totalBoosterAmount)}
+              </span>
+            </CardTitle>
             <CardDescription>Doping türlerine göre satış dağılımı</CardDescription>
           </CardHeader>
           <CardContent>
@@ -186,7 +183,9 @@ const Analysis = () => {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent, payload }) => 
+                      `${name} ${(percent * 100).toFixed(0)}% (${formatPrice(payload.amount)})`
+                    }
                     outerRadius={100}
                     fill="#8884d8"
                     dataKey="value"
@@ -195,7 +194,12 @@ const Analysis = () => {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip 
+                    formatter={(value, name, props) => [
+                      formatPrice(props.payload.amount),
+                      name
+                    ]}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -204,7 +208,12 @@ const Analysis = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Mağaza Dağılımı</CardTitle>
+            <CardTitle className="flex justify-between items-center">
+              <span>Mağaza Dağılımı</span>
+              <span className="text-lg font-normal text-muted-foreground">
+                Toplam: {formatPrice(totalStoreAmount)}
+              </span>
+            </CardTitle>
             <CardDescription>Mağaza türlerine göre abonelik dağılımı</CardDescription>
           </CardHeader>
           <CardContent>
@@ -216,7 +225,9 @@ const Analysis = () => {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={({ name, percent, payload }) => 
+                      `${name} ${(percent * 100).toFixed(0)}% (${formatPrice(payload.amount)})`
+                    }
                     outerRadius={100}
                     fill="#8884d8"
                     dataKey="value"
@@ -225,7 +236,12 @@ const Analysis = () => {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip 
+                    formatter={(value, name, props) => [
+                      formatPrice(props.payload.amount),
+                      name
+                    ]}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
