@@ -28,27 +28,52 @@ import { format, addMonths } from "date-fns";
 import { useState } from "react";
 
 // Örnek veri
-const stores = Array.from({ length: 30 }, (_, i) => {
-  const subscriptionDate = new Date(2024, 3, Math.floor(Math.random() * 30) + 1);
-  const subscriptionMonths = Math.floor(Math.random() * 11) + 1;
-  const type = Math.random() > 0.5 ? "premium" : "standard";
-  const statuses = ["approved", "pending", "suspended"] as const;
-  const status = statuses[Math.floor(Math.random() * statuses.length)];
-  
-  return {
-    id: i + 1,
-    logo: `https://picsum.photos/seed/${i + 1}/200`,
-    name: `${["Altın", "Gümüş", "Kristal", "Elmas", "Zümrüt"][Math.floor(Math.random() * 5)]} Saat`,
-    ownerName: ["Ahmet Yılmaz", "Mehmet Demir", "Ayşe Kaya", "Fatma Şahin", "Ali Öztürk"][Math.floor(Math.random() * 5)],
-    subscriptionDate,
-    subscriptionEndDate: addMonths(subscriptionDate, subscriptionMonths),
-    type,
-    status,
-    activeListings: Math.floor(Math.random() * 100),
-    activeAuctions: Math.floor(Math.random() * 20),
-    followers: Math.floor(Math.random() * 1000),
-  };
-}).sort((a, b) => b.subscriptionDate.getTime() - a.subscriptionDate.getTime());
+const stores = [
+  ...Array.from({ length: 5 }, (_, i) => {
+    const subscriptionDate = new Date(2024, 3, Math.floor(Math.random() * 30) + 1);
+    const subscriptionMonths = Math.floor(Math.random() * 11) + 1;
+    const type = Math.random() > 0.5 ? "premium" : "standard";
+    
+    return {
+      id: i + 1,
+      logo: `https://picsum.photos/seed/${i + 1}/200`,
+      name: `${["Altın", "Gümüş", "Kristal", "Elmas", "Zümrüt"][Math.floor(Math.random() * 5)]} Saat`,
+      ownerName: ["Ahmet Yılmaz", "Mehmet Demir", "Ayşe Kaya", "Fatma Şahin", "Ali Öztürk"][Math.floor(Math.random() * 5)],
+      subscriptionDate,
+      subscriptionEndDate: addMonths(subscriptionDate, subscriptionMonths),
+      type,
+      status: "pending" as const,
+      activeListings: 0,
+      activeAuctions: 0,
+      followers: 0,
+    };
+  }),
+  ...Array.from({ length: 25 }, (_, i) => {
+    const subscriptionDate = new Date(2024, 3, Math.floor(Math.random() * 30) + 1);
+    const subscriptionMonths = Math.floor(Math.random() * 11) + 1;
+    const type = Math.random() > 0.5 ? "premium" : "standard";
+    const statuses = ["approved", "suspended"] as const;
+    const status = statuses[Math.floor(Math.random() * statuses.length)];
+    
+    return {
+      id: i + 6,
+      logo: `https://picsum.photos/seed/${i + 6}/200`,
+      name: `${["Altın", "Gümüş", "Kristal", "Elmas", "Zümrüt"][Math.floor(Math.random() * 5)]} Saat`,
+      ownerName: ["Ahmet Yılmaz", "Mehmet Demir", "Ayşe Kaya", "Fatma Şahin", "Ali Öztürk"][Math.floor(Math.random() * 5)],
+      subscriptionDate,
+      subscriptionEndDate: addMonths(subscriptionDate, subscriptionMonths),
+      type,
+      status,
+      activeListings: Math.floor(Math.random() * 100),
+      activeAuctions: Math.floor(Math.random() * 20),
+      followers: Math.floor(Math.random() * 1000),
+    };
+  })
+].sort((a, b) => {
+  if (a.status === "pending" && b.status !== "pending") return -1;
+  if (a.status !== "pending" && b.status === "pending") return 1;
+  return b.subscriptionDate.getTime() - a.subscriptionDate.getTime();
+});
 
 type Store = typeof stores[0];
 type SortField = "listings" | "auctions" | "followers";
