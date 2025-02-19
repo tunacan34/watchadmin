@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronRight, Plus } from "lucide-react";
+import { ChevronRight, Plus, Search } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SubModel {
@@ -65,6 +65,12 @@ const Brands = () => {
   const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
   const [newBrandName, setNewBrandName] = useState("");
   const [newModels, setNewModels] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isAddingModels, setIsAddingModels] = useState(false);
+
+  const filteredBrands = brands.filter(brand => 
+    brand.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleAddBrand = () => {
     if (newBrandName.trim()) {
@@ -102,6 +108,7 @@ const Brands = () => {
 
       setBrands(updatedBrands);
       setNewModels("");
+      setIsAddingModels(false);
     }
   };
 
@@ -140,12 +147,21 @@ const Brands = () => {
       <div className="grid grid-cols-1 md:grid-cols-[300px,1fr] gap-6">
         {/* Marka Listesi */}
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-4">
             <CardTitle className="text-lg">Markalar</CardTitle>
+            <div className="relative mt-4">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Marka ara..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-8"
+              />
+            </div>
           </CardHeader>
           <CardContent className="p-0">
             <ScrollArea className="h-[500px]">
-              {brands.map((brand) => (
+              {filteredBrands.map((brand) => (
                 <Button
                   key={brand.id}
                   variant="ghost"
@@ -165,46 +181,49 @@ const Brands = () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
               <CardTitle className="text-lg">{selectedBrand.name} Modelleri</CardTitle>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Model Ekle
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>{selectedBrand.name} - Model Ekle</DialogTitle>
-                  </DialogHeader>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="models">
-                        Model İsimleri (Her satıra bir model)
-                      </Label>
-                      <Textarea
-                        id="models"
-                        value={newModels}
-                        onChange={(e) => setNewModels(e.target.value)}
-                        placeholder="Datejust
-Submariner
-GMT-Master II"
-                        className="min-h-[150px]"
-                      />
-                    </div>
-                    <Button onClick={() => handleAddSubModels(selectedBrand.id)}>
-                      Ekle
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
+              {!isAddingModels && (
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setIsAddingModels(true)}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Model Ekle
+                </Button>
+              )}
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-[450px]">
-                <div className="space-y-1">
+                <div className="space-y-3">
+                  {isAddingModels && (
+                    <div className="space-y-3 border rounded-md p-3 bg-muted/50">
+                      <Textarea
+                        value={newModels}
+                        onChange={(e) => setNewModels(e.target.value)}
+                        placeholder="Her satıra bir model yazın:&#10;Datejust&#10;Submariner&#10;GMT-Master II"
+                        className="min-h-[100px]"
+                      />
+                      <div className="flex gap-2 justify-end">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => setIsAddingModels(false)}
+                        >
+                          İptal
+                        </Button>
+                        <Button 
+                          size="sm"
+                          onClick={() => handleAddSubModels(selectedBrand.id)}
+                        >
+                          Ekle
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                   {selectedBrand.subModels.map((model) => (
                     <div
                       key={model.id}
-                      className="flex items-center px-4 py-2 text-sm border-b last:border-0"
+                      className="flex items-center px-4 py-2 text-sm border rounded-md"
                     >
                       {model.name}
                     </div>
