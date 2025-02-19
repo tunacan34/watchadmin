@@ -1,4 +1,3 @@
-
 import {
   Table,
   TableBody,
@@ -15,10 +14,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, User, Pen, Trash, Mail, Lock } from "lucide-react";
+import { MoreHorizontal, User, Eye, Bell, Pause } from "lucide-react";
 import { format } from "date-fns";
 
-// Dummy veri oluşturalım
 const members = [
   {
     id: 1,
@@ -143,24 +141,16 @@ const Members = () => {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48">
                       <DropdownMenuItem className="flex items-center gap-2">
-                        <User className="w-4 h-4" />
-                        Detaylar
+                        <Eye className="w-4 h-4" />
+                        Görüntüle
                       </DropdownMenuItem>
                       <DropdownMenuItem className="flex items-center gap-2">
-                        <Pen className="w-4 h-4" />
-                        Düzenle
+                        <Bell className="w-4 h-4" />
+                        Bildirim gönder
                       </DropdownMenuItem>
                       <DropdownMenuItem className="flex items-center gap-2">
-                        <Mail className="w-4 h-4" />
-                        Mesaj Gönder
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="flex items-center gap-2">
-                        <Lock className="w-4 h-4" />
-                        Hesabı Kilitle
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="flex items-center gap-2 text-red-600">
-                        <Trash className="w-4 h-4" />
-                        Sil
+                        <Pause className="w-4 h-4" />
+                        Askıya al
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
