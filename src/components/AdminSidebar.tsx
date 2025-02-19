@@ -18,6 +18,7 @@ import {
   MessageSquare,
   MessageCircle,
   Settings,
+  LineChart,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -32,6 +33,7 @@ const menuItems = [
   { icon: ClipboardList, label: "İŞLEMLER", href: "/transactions" },
   { icon: BarChart2, label: "ANALİZ", href: "/analysis" },
   { icon: PieChart, label: "İSTATİSTİK", href: "/statistics" },
+  { icon: LineChart, label: "G.ANALYTICS", href: "/ganalytics" },
   { icon: FileText, label: "BELGELER", href: "/documents" },
   { icon: Tag, label: "MARKA MODEL", href: "/brands" },
   { icon: MessageSquare, label: "DESTEK TALEPLERİ", href: "/support" },
