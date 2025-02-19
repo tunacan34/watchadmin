@@ -1,4 +1,3 @@
-
 import {
   Card,
   CardContent,
@@ -30,9 +29,22 @@ import {
   Area,
 } from "recharts";
 import { Badge } from "@/components/ui/badge";
+import { DatePicker } from "@/components/ui/date-picker";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useState } from "react";
+import { addMonths, subMonths } from "date-fns";
 
 const Statistics = () => {
-  // Örnek veriler
+  const [period, setPeriod] = useState<"1" | "3" | "6" | "12" | "custom">("6");
+  const [startDate, setStartDate] = useState<Date | undefined>(subMonths(new Date(), 6));
+  const [endDate, setEndDate] = useState<Date | undefined>(new Date());
+
   const activityData = [
     { date: "Pazartesi", ilanlar: 120, mezatlar: 45, kullanicilar: 250 },
     { date: "Salı", ilanlar: 132, mezatlar: 48, kullanicilar: 280 },
@@ -58,7 +70,6 @@ const Statistics = () => {
     { ay: "Haziran", total: 2400, new: 300 },
   ];
 
-  // Değişim yüzdeleri
   const metrics = [
     {
       title: "Toplam Kullanıcı",
@@ -90,9 +101,55 @@ const Statistics = () => {
     },
   ];
 
+  const handlePeriodChange = (value: "1" | "3" | "6" | "12" | "custom") => {
+    setPeriod(value);
+    if (value !== "custom") {
+      const months = parseInt(value);
+      setStartDate(subMonths(new Date(), months));
+      setEndDate(new Date());
+    }
+  };
+
+  const getFilteredData = (data: any[], startDate: Date | undefined, endDate: Date | undefined) => {
+    if (!startDate || !endDate) return data;
+    return data;
+  };
+
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-semibold text-admin-foreground mb-6">İSTATİSTİK</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-semibold text-admin-foreground">İSTATİSTİK</h1>
+        
+        <div className="flex gap-4 items-center">
+          <Select value={period} onValueChange={handlePeriodChange}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Periyot seçin" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1">Son 1 Ay</SelectItem>
+              <SelectItem value="3">Son 3 Ay</SelectItem>
+              <SelectItem value="6">Son 6 Ay</SelectItem>
+              <SelectItem value="12">Son 12 Ay</SelectItem>
+              <SelectItem value="custom">Özel Tarih Aralığı</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {period === "custom" && (
+            <div className="flex gap-2">
+              <DatePicker
+                date={startDate}
+                setDate={setStartDate}
+                placeholder="Başlangıç"
+              />
+              <DatePicker
+                date={endDate}
+                setDate={setEndDate}
+                placeholder="Bitiş"
+              />
+            </div>
+          )}
+        </div>
+      </div>
 
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         {metrics.map((metric, index) => (
@@ -113,7 +170,9 @@ const Statistics = () => {
                 <Badge variant={metric.trend === "up" ? "default" : "destructive"}>
                   {metric.change}
                 </Badge>
-                <span className="text-muted-foreground">{metric.description}</span>
+                <span className="text-muted-foreground">
+                  {period === "custom" ? "Seçilen dönemde" : "Son " + period + " ayda"}
+                </span>
               </p>
             </CardContent>
           </Card>
@@ -124,12 +183,16 @@ const Statistics = () => {
         <Card>
           <CardHeader>
             <CardTitle>Site Aktivitesi</CardTitle>
-            <CardDescription>Günlük aktivite değişimleri</CardDescription>
+            <CardDescription>
+              {period === "custom" 
+                ? "Seçilen tarih aralığında aktivite değişimleri"
+                : `Son ${period} aylık aktivite değişimleri`}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[350px]">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={activityData}>
+                <LineChart data={getFilteredData(activityData, startDate, endDate)}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis />
@@ -165,12 +228,16 @@ const Statistics = () => {
         <Card>
           <CardHeader>
             <CardTitle>Kullanıcı Büyümesi</CardTitle>
-            <CardDescription>Aylık toplam ve yeni kullanıcı sayısı</CardDescription>
+            <CardDescription>
+              {period === "custom" 
+                ? "Seçilen tarih aralığında kullanıcı büyümesi"
+                : `Son ${period} aylık kullanıcı büyümesi`}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[350px]">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={userGrowthData}>
+                <AreaChart data={getFilteredData(userGrowthData, startDate, endDate)}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="ay" />
                   <YAxis />
@@ -202,12 +269,16 @@ const Statistics = () => {
       <Card>
         <CardHeader>
           <CardTitle>Durum Dağılımı</CardTitle>
-          <CardDescription>İlan, mezat ve mağazaların durum dağılımları</CardDescription>
+          <CardDescription>
+            {period === "custom" 
+              ? "Seçilen tarih aralığında durum dağılımları"
+              : `Son ${period} aylık durum dağılımları`}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={statusData}>
+              <BarChart data={getFilteredData(statusData, startDate, endDate)}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
