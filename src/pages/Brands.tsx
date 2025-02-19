@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   Card,
@@ -151,7 +150,7 @@ const Brands = () => {
               Yeni Marka Ekle
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Yeni Marka Ekle</DialogTitle>
             </DialogHeader>
