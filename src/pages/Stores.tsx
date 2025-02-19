@@ -1,4 +1,3 @@
-
 import {
   Table,
   TableBody,
@@ -33,7 +32,7 @@ const stores = Array.from({ length: 30 }, (_, i) => {
   const subscriptionDate = new Date(2024, 3, Math.floor(Math.random() * 30) + 1);
   const subscriptionMonths = Math.floor(Math.random() * 11) + 1;
   const type = Math.random() > 0.5 ? "premium" : "standard";
-  const statuses = ["approved", "pending", "suspended", "renewal"] as const;
+  const statuses = ["approved", "pending", "suspended"] as const;
   const status = statuses[Math.floor(Math.random() * statuses.length)];
   
   return {
@@ -63,8 +62,6 @@ const getStatusText = (status: Store["status"]) => {
       return { text: "Onay Bekliyor", color: "text-yellow-600 bg-yellow-50" };
     case "suspended":
       return { text: "Askıya Alındı", color: "text-red-600 bg-red-50" };
-    case "renewal":
-      return { text: "Yenileme Süreci", color: "text-blue-600 bg-blue-50" };
   }
 };
 
@@ -174,13 +171,6 @@ const Stores = () => {
               size="sm"
             >
               Askıya Alınmış
-            </Button>
-            <Button 
-              variant={storeStatus === "renewal" ? "default" : "outline"}
-              onClick={() => setStoreStatus("renewal")}
-              size="sm"
-            >
-              Yenileme Sürecinde
             </Button>
           </div>
         </div>
