@@ -8,11 +8,12 @@ import {
   Mail,
   Menu,
   X,
+  UserPlus,
 } from "lucide-react";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Kontrol Paneli", href: "#dashboard" },
-  { icon: Users, label: "Kullanıcılar", href: "#users" },
+  { icon: Users, label: "KULLANICI YÖNETİMİ", href: "#user-management" },
   { icon: Package, label: "Ürünler", href: "#products" },
   { icon: Mail, label: "Mesajlar", href: "#messages" },
   { icon: Settings, label: "Ayarlar", href: "#settings" },
