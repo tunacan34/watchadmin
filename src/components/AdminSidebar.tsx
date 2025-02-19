@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "Kontrol Paneli", href: "#dashboard" },
+  { icon: LayoutDashboard, label: "DASHBOARD", href: "#dashboard" },
   { icon: Users, label: "KULLANICI YÖNETİMİ", href: "#user-management" },
   { icon: Package, label: "Ürünler", href: "#products" },
   { icon: Mail, label: "Mesajlar", href: "#messages" },
