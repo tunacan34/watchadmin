@@ -16,7 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, User, Eye, Bell, Pause, Search } from "lucide-react";
+import { MoreHorizontal, User, Eye, Bell, Pause, Search, Edit, RotateCcw, Send } from "lucide-react";
 import { format } from "date-fns";
 import { useState } from "react";
 
@@ -126,15 +126,17 @@ const Members = () => {
     <div className="p-8">
       <h1 className="text-3xl font-semibold text-admin-foreground mb-8">ÜYELER</h1>
       
-      <div className="mb-6 flex items-center gap-2">
-        <Search className="w-5 h-5 text-gray-500" />
-        <Input
-          type="search"
-          placeholder="Üye ara..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm"
-        />
+      <div className="mb-6">
+        <div className="relative max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Input
+            type="search"
+            placeholder="Üye ara..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10 border-gray-200"
+          />
+        </div>
       </div>
 
       <div className="rounded-md border">
@@ -179,8 +181,16 @@ const Members = () => {
                         Görüntüle
                       </DropdownMenuItem>
                       <DropdownMenuItem className="flex items-center gap-2">
+                        <Edit className="w-4 h-4" />
+                        Düzenle
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="flex items-center gap-2">
                         <Bell className="w-4 h-4" />
                         Bildirim gönder
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="flex items-center gap-2">
+                        <Send className="w-4 h-4" />
+                        Sıfırlama bağlantısı gönder
                       </DropdownMenuItem>
                       <DropdownMenuItem className="flex items-center gap-2">
                         <Pause className="w-4 h-4" />
