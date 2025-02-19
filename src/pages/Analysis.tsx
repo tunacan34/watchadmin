@@ -20,16 +20,50 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { DatePicker } from "@/components/ui/date-picker";
+import { useState } from "react";
+import { addMonths, subMonths } from "date-fns";
 
 const Analysis = () => {
-  const monthlyRevenue = [
-    { month: "Ekim", store: 25000, booster: 18000 },
-    { month: "Kasım", store: 28000, booster: 22000 },
-    { month: "Aralık", store: 32000, booster: 24000 },
-    { month: "Ocak", store: 35000, booster: 28000 },
-    { month: "Şubat", store: 40000, booster: 32000 },
-    { month: "Mart", store: 45000, booster: 38000 },
+  const [period, setPeriod] = useState<"1" | "3" | "6" | "12" | "custom">("6");
+  const [startDate, setStartDate] = useState<Date | undefined>(subMonths(new Date(), 6));
+  const [endDate, setEndDate] = useState<Date | undefined>(new Date());
+
+  // Son 12 aylık veri
+  const allMonthlyRevenue = [
+    { month: "Nisan 2023", store: 20000, booster: 15000 },
+    { month: "Mayıs 2023", store: 22000, booster: 16000 },
+    { month: "Haziran 2023", store: 23000, booster: 17000 },
+    { month: "Temmuz 2023", store: 24000, booster: 17500 },
+    { month: "Ağustos 2023", store: 25000, booster: 18000 },
+    { month: "Eylül 2023", store: 26000, booster: 19000 },
+    { month: "Ekim 2023", store: 25000, booster: 18000 },
+    { month: "Kasım 2023", store: 28000, booster: 22000 },
+    { month: "Aralık 2023", store: 32000, booster: 24000 },
+    { month: "Ocak 2024", store: 35000, booster: 28000 },
+    { month: "Şubat 2024", store: 40000, booster: 32000 },
+    { month: "Mart 2024", store: 45000, booster: 38000 },
   ];
+
+  // Seçilen periyoda göre veriyi filtrele
+  const getFilteredData = () => {
+    if (period === "custom" && startDate && endDate) {
+      // Özel tarih aralığı için filtreleme
+      return allMonthlyRevenue.slice(-12); // Bu kısım gerçek API'den gelen veriye göre düzenlenmeli
+    }
+
+    const months = parseInt(period);
+    return allMonthlyRevenue.slice(-months);
+  };
+
+  const monthlyRevenue = getFilteredData();
 
   const boosterDistribution = [
     { name: "İlan Paketi", value: 45, amount: 450000 },
@@ -67,9 +101,50 @@ const Analysis = () => {
 
   const growthRate = ((lastMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100;
 
+  const handlePeriodChange = (value: "1" | "3" | "6" | "12" | "custom") => {
+    setPeriod(value);
+    if (value !== "custom") {
+      const months = parseInt(value);
+      setStartDate(subMonths(new Date(), months));
+      setEndDate(new Date());
+    }
+  };
+
   return (
     <div className="p-8 space-y-8">
-      <h1 className="text-3xl font-semibold text-admin-foreground mb-6">ANALİZ</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-semibold text-admin-foreground">ANALİZ</h1>
+        
+        <div className="flex gap-4 items-center">
+          <Select value={period} onValueChange={handlePeriodChange}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Periyot seçin" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1">Son 1 Ay</SelectItem>
+              <SelectItem value="3">Son 3 Ay</SelectItem>
+              <SelectItem value="6">Son 6 Ay</SelectItem>
+              <SelectItem value="12">Son 12 Ay</SelectItem>
+              <SelectItem value="custom">Özel Tarih Aralığı</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {period === "custom" && (
+            <div className="flex gap-2">
+              <DatePicker
+                date={startDate}
+                setDate={setStartDate}
+                placeholder="Başlangıç"
+              />
+              <DatePicker
+                date={endDate}
+                setDate={setEndDate}
+                placeholder="Bitiş"
+              />
+            </div>
+          )}
+        </div>
+      </div>
 
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         <Card>
