@@ -1,4 +1,3 @@
-
 import {
   Table,
   TableBody,
@@ -28,25 +27,24 @@ import { Edit, Eye, CheckCircle, Search, Filter, MoreHorizontal, Archive, Ban, P
 import { format } from "date-fns";
 import { useState } from "react";
 
-// Durumlar için tip tanımı
 type ListingStatus = "active" | "pending" | "rejected" | "inactive" | "sold";
 
-// İlan tipi tanımı
 interface Listing {
   id: number;
   coverImage: string;
   title: string;
   seller: string;
   isStore: boolean;
+  isPremiumStore: boolean;
   price: number;
   status: ListingStatus;
   views: number;
+  favorites: number;
   createdAt: Date;
   updatedAt: Date;
   revisionCount: number;
 }
 
-// 50 adet örnek veri oluşturalım
 const generateDummyListings = (): Listing[] => {
   const statuses: ListingStatus[] = ["active", "pending", "rejected", "inactive", "sold"];
   const watches = [
@@ -63,14 +61,14 @@ const generateDummyListings = (): Listing[] => {
   ];
   
   const sellers = [
-    { name: "Lüks Saat Mağazası", isStore: true },
-    { name: "Premium Saat", isStore: true },
-    { name: "VIP Saat Boutique", isStore: true },
-    { name: "Ahmet Yılmaz", isStore: false },
-    { name: "Mehmet Demir", isStore: false },
-    { name: "Ayşe Kaya", isStore: false },
-    { name: "Saat Dünyası", isStore: true },
-    { name: "Koleksiyoner Saatler", isStore: true }
+    { name: "Lüks Saat Mağazası", isStore: true, isPremiumStore: true },
+    { name: "Premium Saat", isStore: true, isPremiumStore: true },
+    { name: "VIP Saat Boutique", isStore: true, isPremiumStore: true },
+    { name: "Ahmet Yılmaz", isStore: false, isPremiumStore: false },
+    { name: "Mehmet Demir", isStore: false, isPremiumStore: false },
+    { name: "Ayşe Kaya", isStore: false, isPremiumStore: false },
+    { name: "Saat Dünyası", isStore: true, isPremiumStore: false },
+    { name: "Koleksiyoner Saatler", isStore: true, isPremiumStore: false }
   ];
 
   return Array.from({ length: 50 }, (_, i) => {
@@ -89,9 +87,11 @@ const generateDummyListings = (): Listing[] => {
       title: `${watch} ${year} / ${Math.random() > 0.7 ? "İkinci El" : "Sıfır"}`,
       seller: seller.name,
       isStore: seller.isStore,
+      isPremiumStore: seller.isPremiumStore,
       price: Math.floor(200000 + Math.random() * 1800000),
       status,
       views: status === "pending" ? 0 : Math.floor(Math.random() * 1000),
+      favorites: status === "pending" ? 0 : Math.floor(Math.random() * 100),
       createdAt,
       updatedAt,
       revisionCount
@@ -105,7 +105,6 @@ const listings = generateDummyListings().sort((a, b) => {
   return b.createdAt.getTime() - a.createdAt.getTime();
 });
 
-// Durum badge'i için renk ve metin belirleme
 const getStatusBadge = (status: ListingStatus) => {
   const styles = {
     active: "bg-green-100 text-green-800",
@@ -134,9 +133,10 @@ const Listings = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<ListingStatus | "all">("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortField, setSortField] = useState<SortField>("price");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const itemsPerPage = 10;
 
-  // İstatistikler için hesaplama
   const stats = {
     pending: listings.filter(l => l.status === "pending").length,
     active: listings.filter(l => l.status === "active").length,
@@ -147,21 +147,33 @@ const Listings = () => {
     member: listings.filter(l => !l.isStore).length,
   };
 
-  const filteredListings = listings.filter(listing => {
-    const matchesSearch = listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         listing.seller.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || listing.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const sortedAndFilteredListings = listings
+    .filter(listing => {
+      const matchesSearch = listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           listing.seller.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === "all" || listing.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    })
+    .sort((a, b) => {
+      const multiplier = sortDirection === "asc" ? 1 : -1;
+      return multiplier * (a[sortField] - b[sortField]);
+    });
 
-  // Sayfalandırma için veri kırpma
-  const pageCount = Math.ceil(filteredListings.length / itemsPerPage);
-  const paginatedListings = filteredListings.slice(
+  const pageCount = Math.ceil(sortedAndFilteredListings.length / itemsPerPage);
+  const paginatedListings = sortedAndFilteredListings.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // Sayfa değiştirme işlevi
+  const toggleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(prev => prev === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("desc");
+    }
+  };
+
   const changePage = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -172,7 +184,6 @@ const Listings = () => {
       <h1 className="text-3xl font-semibold text-admin-foreground mb-8">İLANLAR</h1>
 
       <div className="flex flex-col gap-6">
-        {/* İstatistik Kartları */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
           <div className="bg-yellow-50 border border-yellow-100 rounded-lg p-4">
             <div className="text-yellow-800 font-medium">Onay Bekleyen</div>
@@ -204,7 +215,6 @@ const Listings = () => {
           </div>
         </div>
 
-        {/* Arama ve Filtreleme */}
         <div className="flex flex-wrap items-center gap-4">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
@@ -246,7 +256,33 @@ const Listings = () => {
           </DropdownMenu>
         </div>
 
-        {/* Tablo */}
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => toggleSort("price")}
+            className={sortField === "price" ? "bg-muted" : ""}
+          >
+            Fiyat {sortField === "price" && (sortDirection === "asc" ? "↑" : "↓")}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => toggleSort("views")}
+            className={sortField === "views" ? "bg-muted" : ""}
+          >
+            Görüntülenme {sortField === "views" && (sortDirection === "asc" ? "↑" : "↓")}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => toggleSort("favorites")}
+            className={sortField === "favorites" ? "bg-muted" : ""}
+          >
+            Favori {sortField === "favorites" && (sortDirection === "asc" ? "↑" : "↓")}
+          </Button>
+        </div>
+
         <div className="rounded-lg border">
           <Table>
             <TableHeader>
@@ -257,6 +293,7 @@ const Listings = () => {
                 <TableHead>Fiyat</TableHead>
                 <TableHead>Durum</TableHead>
                 <TableHead>Görüntülenme</TableHead>
+                <TableHead>Favori</TableHead>
                 <TableHead>Tarih</TableHead>
                 <TableHead className="text-right">İşlemler</TableHead>
               </TableRow>
@@ -275,14 +312,24 @@ const Listings = () => {
                   <TableCell>
                     <div className="flex flex-col">
                       <span>{listing.seller}</span>
-                      <span className="text-xs text-gray-500">
-                        {listing.isStore ? "Mağaza" : "Üye"}
-                      </span>
+                      {listing.isStore && (
+                        <span className={`text-xs px-2 py-0.5 rounded-full w-fit ${
+                          listing.isPremiumStore 
+                            ? "bg-orange-100 text-orange-800 border border-orange-200" 
+                            : "bg-purple-100 text-purple-800 border border-purple-200"
+                        }`}>
+                          {listing.isPremiumStore ? "Premium Mağaza" : "Standart Mağaza"}
+                        </span>
+                      )}
+                      {!listing.isStore && (
+                        <span className="text-xs text-gray-500">Üye</span>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>{listing.price.toLocaleString('tr-TR')} ₺</TableCell>
                   <TableCell>{getStatusBadge(listing.status)}</TableCell>
                   <TableCell>{listing.status === "pending" ? 0 : listing.views}</TableCell>
+                  <TableCell>{listing.status === "pending" ? 0 : listing.favorites}</TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-1">
                       <span className="text-sm">
@@ -354,7 +401,6 @@ const Listings = () => {
           </Table>
         </div>
 
-        {/* Sayfalandırma */}
         {pageCount > 1 && (
           <Pagination>
             <PaginationContent>
