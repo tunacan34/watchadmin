@@ -21,6 +21,7 @@ import Brands from "./pages/Brands";
 import Support from "./pages/Support";
 import Comments from "./pages/Comments";
 import Settings from "./pages/Settings";
+import GAnalytics from "./pages/GAnalytics";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const App = () => (
           <Route path="/transactions" element={<Layout><Transactions /></Layout>} />
           <Route path="/analysis" element={<Layout><Analysis /></Layout>} />
           <Route path="/statistics" element={<Layout><Statistics /></Layout>} />
+          <Route path="/ganalytics" element={<Layout><GAnalytics /></Layout>} />
           <Route path="/documents" element={<Layout><Documents /></Layout>} />
           <Route path="/brands" element={<Layout><Brands /></Layout>} />
           <Route path="/support" element={<Layout><Support /></Layout>} />
