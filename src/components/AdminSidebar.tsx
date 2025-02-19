@@ -17,6 +17,7 @@ import {
   Tag,
   MessageSquare,
   MessageCircle,
+  Settings,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -35,6 +36,7 @@ const menuItems = [
   { icon: Tag, label: "MARKA MODEL", href: "/brands" },
   { icon: MessageSquare, label: "DESTEK TALEPLERİ", href: "/support" },
   { icon: MessageCircle, label: "YORUMLAR", href: "/comments" },
+  { icon: Settings, label: "AYARLAR", href: "/settings" },
 ];
 
 export const AdminSidebar = () => {
