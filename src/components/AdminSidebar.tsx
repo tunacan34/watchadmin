@@ -14,7 +14,7 @@ import {
 const menuItems = [
   { icon: LayoutDashboard, label: "DASHBOARD", href: "#dashboard" },
   { icon: Users, label: "KULLANICI YÖNETİMİ", href: "#user-management" },
-  { icon: Package, label: "Ürünler", href: "#products" },
+  { icon: Package, label: "İLAN YÖNETİMİ", href: "#ads-management" },
   { icon: Mail, label: "Mesajlar", href: "#messages" },
   { icon: Settings, label: "Ayarlar", href: "#settings" },
 ];
