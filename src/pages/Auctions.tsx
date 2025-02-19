@@ -30,9 +30,13 @@ import {
 
 type AuctionStatus = "pending" | "active" | "completed" | "cancelled" | "paused";
 type StoreType = "standard" | "premium" | null;
+type SortField = "timeLeft" | "bids" | null;
+type SortOrder = "asc" | "desc";
+type SellerFilter = "all" | "premium" | "standard" | "member";
 
 interface Auction {
   id: number;
+  auctionNo: string;
   coverImage: string;
   title: string;
   seller: {
@@ -43,7 +47,7 @@ interface Auction {
   startDate: Date;
   endDate: Date;
   startingPrice: number;
-  currentBid: number | null;
+  currentBid: number;
   totalBids: number;
   status: AuctionStatus;
   favorites: number;
@@ -59,15 +63,19 @@ const generateDummyAuctions = (): Auction[] => {
 
   return Array.from({ length: 50 }, (_, index) => {
     const isStore = Math.random() > 0.5;
-    const status: AuctionStatus[] = ["pending", "active", "completed", "cancelled", "paused"];
+    const status: AuctionStatus[] = ["active", "completed", "cancelled", "paused"];
     const randomStatus = status[Math.floor(Math.random() * status.length)];
     const startDate = subDays(now, Math.floor(Math.random() * 10));
-    const endDate = addDays(startDate, Math.floor(Math.random() * 30) + 1);
+    const isShortDuration = Math.random() > 0.7;
+    const endDate = isShortDuration 
+      ? addDays(now, Math.random()) // 1 günden az
+      : addDays(startDate, Math.floor(Math.random() * 30) + 1);
     const startingPrice = Math.floor(Math.random() * 900000) + 100000;
-    const currentBid = randomStatus === "active" ? startingPrice + Math.floor(Math.random() * 200000) : null;
+    const currentBid = startingPrice + Math.floor(Math.random() * 200000);
 
     return {
       id: index + 1,
+      auctionNo: Math.floor(10000000 + Math.random() * 90000000).toString(),
       coverImage: `https://picsum.photos/seed/${index}/200/200`,
       title: `${watchBrands[Math.floor(Math.random() * watchBrands.length)]} ${
         watchModels[Math.floor(Math.random() * watchModels.length)]
@@ -118,10 +126,17 @@ const getRemainingTime = (endDate: Date) => {
   const now = new Date();
   if (now >= endDate) return "Süre Doldu";
   
-  return formatDistanceToNow(endDate, {
-    locale: tr,
-    addSuffix: true,
-  });
+  const remainingHours = (endDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+  const isLessThanDay = remainingHours < 24;
+  
+  return (
+    <span className={isLessThanDay ? "text-red-600 font-medium" : "text-gray-500"}>
+      {formatDistanceToNow(endDate, {
+        locale: tr,
+        addSuffix: true,
+      })}
+    </span>
+  );
 };
 
 const getSellerInfo = (seller: { name: string; isStore: boolean; storeType: StoreType }) => {
@@ -148,44 +163,77 @@ const getSellerInfo = (seller: { name: string; isStore: boolean; storeType: Stor
   );
 };
 
+const sortAuctions = (auctions: Auction[], field: SortField, order: SortOrder) => {
+  if (!field) return auctions;
+
+  return [...auctions].sort((a, b) => {
+    if (field === "timeLeft") {
+      const diff = a.endDate.getTime() - b.endDate.getTime();
+      return order === "asc" ? diff : -diff;
+    }
+    if (field === "bids") {
+      const diff = a.totalBids - b.totalBids;
+      return order === "asc" ? diff : -diff;
+    }
+    return 0;
+  });
+};
+
 const Auctions = () => {
   const allAuctions = generateDummyAuctions();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<AuctionStatus | "all">("all");
+  const [sellerFilter, setSellerFilter] = useState<SellerFilter>("all");
+  const [sortField, setSortField] = useState<SortField>(null);
+  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   const stats = {
     total: allAuctions.length,
     active: allAuctions.filter(a => a.status === "active").length,
-    pending: allAuctions.filter(a => a.status === "pending").length,
     completed: allAuctions.filter(a => a.status === "completed").length,
     cancelled: allAuctions.filter(a => a.status === "cancelled").length,
     paused: allAuctions.filter(a => a.status === "paused").length,
+    premiumStore: allAuctions.filter(a => a.seller.storeType === "premium").length,
+    standardStore: allAuctions.filter(a => a.seller.storeType === "standard").length,
+    member: allAuctions.filter(a => !a.seller.isStore).length,
     totalBids: allAuctions.reduce((sum, auction) => sum + auction.totalBids, 0),
     totalFavorites: allAuctions.reduce((sum, auction) => sum + auction.favorites, 0),
   };
 
   const filteredAuctions = allAuctions.filter(auction => {
     const matchesSearch = auction.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         auction.seller.name.toLowerCase().includes(searchTerm.toLowerCase());
+                         auction.seller.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         auction.auctionNo.includes(searchTerm);
     const matchesStatus = statusFilter === "all" || auction.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesSeller = sellerFilter === "all" || 
+                         (sellerFilter === "premium" && auction.seller.storeType === "premium") ||
+                         (sellerFilter === "standard" && auction.seller.storeType === "standard") ||
+                         (sellerFilter === "member" && !auction.seller.isStore);
+    return matchesSearch && matchesStatus && matchesSeller;
   });
 
-  const totalPages = Math.ceil(filteredAuctions.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedAuctions = filteredAuctions.slice(startIndex, startIndex + itemsPerPage);
+  const sortedAuctions = sortAuctions(filteredAuctions, sortField, sortOrder);
 
-  const changePage = (page: number) => {
-    setCurrentPage(page);
+  const totalPages = Math.ceil(sortedAuctions.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedAuctions = sortedAuctions.slice(startIndex, startIndex + itemsPerPage);
+
+  const toggleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortOrder(order => order === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortOrder("asc");
+    }
   };
 
   return (
     <div className="p-8">
       <h1 className="text-3xl font-semibold text-admin-foreground mb-8">MEZATLAR</h1>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8">
         <div className="bg-white p-4 rounded-lg shadow">
           <div className="text-sm text-gray-500">Toplam Mezat</div>
           <div className="text-2xl font-semibold">{stats.total}</div>
@@ -193,6 +241,18 @@ const Auctions = () => {
         <div className="bg-white p-4 rounded-lg shadow">
           <div className="text-sm text-gray-500">Aktif Mezat</div>
           <div className="text-2xl font-semibold text-green-600">{stats.active}</div>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <div className="text-sm text-gray-500">Premium Mağaza</div>
+          <div className="text-2xl font-semibold text-orange-600">{stats.premiumStore}</div>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <div className="text-sm text-gray-500">Standart Mağaza</div>
+          <div className="text-2xl font-semibold text-purple-600">{stats.standardStore}</div>
+        </div>
+        <div className="bg-white p-4 rounded-lg shadow">
+          <div className="text-sm text-gray-500">Üye Mezatları</div>
+          <div className="text-2xl font-semibold text-blue-600">{stats.member}</div>
         </div>
         <div className="bg-white p-4 rounded-lg shadow">
           <div className="text-sm text-gray-500">Toplam Teklif</div>
@@ -210,7 +270,7 @@ const Auctions = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <Input
               type="search"
-              placeholder="Mezat adı veya satıcı ara..."
+              placeholder="Mezat no, ad veya satıcı ara..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 border-gray-200"
@@ -231,9 +291,6 @@ const Auctions = () => {
               <DropdownMenuItem onClick={() => setStatusFilter("active")}>
                 Aktif
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("pending")}>
-                Onay Bekleyen
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setStatusFilter("completed")}>
                 Tamamlanan
               </DropdownMenuItem>
@@ -245,6 +302,49 @@ const Auctions = () => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <Filter className="w-4 h-4 mr-2" />
+                {sellerFilter === "all" ? "Tüm Satıcılar" : 
+                 sellerFilter === "premium" ? "Premium Mağazalar" :
+                 sellerFilter === "standard" ? "Standart Mağazalar" : "Üyeler"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => setSellerFilter("all")}>
+                Tüm Satıcılar
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSellerFilter("premium")}>
+                Premium Mağazalar
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSellerFilter("standard")}>
+                Standart Mağazalar
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setSellerFilter("member")}>
+                Üyeler
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => toggleSort("timeLeft")}
+            className={sortField === "timeLeft" ? "bg-muted" : ""}
+          >
+            Kalan Süre {sortField === "timeLeft" && (sortOrder === "asc" ? "↑" : "↓")}
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => toggleSort("bids")}
+            className={sortField === "bids" ? "bg-muted" : ""}
+          >
+            Teklif Sayısı {sortField === "bids" && (sortOrder === "asc" ? "↑" : "↓")}
+          </Button>
         </div>
 
         <div className="text-sm text-gray-500">
@@ -256,6 +356,7 @@ const Auctions = () => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Mezat No</TableHead>
               <TableHead>Görsel</TableHead>
               <TableHead>Saat Adı</TableHead>
               <TableHead>Satıcı</TableHead>
@@ -270,6 +371,7 @@ const Auctions = () => {
           <TableBody>
             {paginatedAuctions.map((auction) => (
               <TableRow key={auction.id}>
+                <TableCell className="font-mono">{auction.auctionNo}</TableCell>
                 <TableCell>
                   <img
                     src={auction.coverImage}
@@ -292,7 +394,7 @@ const Auctions = () => {
                       <span className="font-medium">
                         {format(auction.endDate, "dd.MM.yyyy HH:mm")}
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs">
                         {getRemainingTime(auction.endDate)}
                       </span>
                     </div>
@@ -306,58 +408,54 @@ const Auctions = () => {
                         {auction.startingPrice.toLocaleString("tr-TR")} ₺
                       </span>
                     </div>
-                    {auction.currentBid && (
-                      <div className="flex flex-col">
-                        <span className="text-sm">Güncel Teklif:</span>
-                        <span className="font-medium text-green-600">
-                          {auction.currentBid.toLocaleString("tr-TR")} ₺
-                        </span>
-                      </div>
-                    )}
+                    <div className="flex flex-col">
+                      <span className="text-sm">Güncel Teklif:</span>
+                      <span className="font-medium text-green-600">
+                        {auction.currentBid.toLocaleString("tr-TR")} ₺
+                      </span>
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell>{auction.totalBids}</TableCell>
                 <TableCell>{getStatusBadge(auction.status)}</TableCell>
                 <TableCell>{auction.favorites}</TableCell>
                 <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button variant="outline" size="icon">
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="icon">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        {auction.status === "pending" && (
-                          <DropdownMenuItem>
-                            <CheckCircle className="w-4 h-4 mr-2" />
-                            Onayla
-                          </DropdownMenuItem>
-                        )}
-                        {auction.status === "active" && (
-                          <DropdownMenuItem>
-                            <Pause className="w-4 h-4 mr-2" />
-                            Durdur
-                          </DropdownMenuItem>
-                        )}
-                        {auction.status === "paused" && (
-                          <DropdownMenuItem>
-                            <Play className="w-4 h-4 mr-2" />
-                            Devam Et
-                          </DropdownMenuItem>
-                        )}
-                        {["pending", "active", "paused"].includes(auction.status) && (
-                          <DropdownMenuItem className="text-red-600">
-                            <Ban className="w-4 h-4 mr-2" />
-                            İptal Et
-                          </DropdownMenuItem>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <MoreHorizontal className="w-4 h-4 mr-2" />
+                        İşlemler
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem>
+                        <Eye className="w-4 h-4 mr-2" />
+                        İncele
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Onayla
+                      </DropdownMenuItem>
+                      {auction.status === "active" && (
+                        <DropdownMenuItem>
+                          <Pause className="w-4 h-4 mr-2" />
+                          Durdur
+                        </DropdownMenuItem>
+                      )}
+                      {auction.status === "paused" && (
+                        <DropdownMenuItem>
+                          <Play className="w-4 h-4 mr-2" />
+                          Devam Et
+                        </DropdownMenuItem>
+                      )}
+                      {["active", "paused"].includes(auction.status) && (
+                        <DropdownMenuItem className="text-red-600">
+                          <Ban className="w-4 h-4 mr-2" />
+                          İptal Et
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}
@@ -371,7 +469,7 @@ const Auctions = () => {
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  onClick={() => changePage(Math.max(1, currentPage - 1))}
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
                 />
               </PaginationItem>
@@ -385,7 +483,7 @@ const Auctions = () => {
                   return (
                     <PaginationItem key={page}>
                       <PaginationLink
-                        onClick={() => changePage(page)}
+                        onClick={() => setCurrentPage(page)}
                         isActive={page === currentPage}
                       >
                         {page}
@@ -407,7 +505,7 @@ const Auctions = () => {
 
               <PaginationItem>
                 <PaginationNext
-                  onClick={() => changePage(Math.min(totalPages, currentPage + 1))}
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
                 />
               </PaginationItem>
