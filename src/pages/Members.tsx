@@ -16,7 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, User, Eye, Bell, Pause, Search, Edit, RotateCcw, Send } from "lucide-react";
+import { MoreHorizontal, User, Eye, Bell, Pause, Search, Edit, RotateCcw, Send, UserPlus } from "lucide-react";
 import { format } from "date-fns";
 import { useState } from "react";
 
@@ -126,7 +126,7 @@ const Members = () => {
     <div className="p-8">
       <h1 className="text-3xl font-semibold text-admin-foreground mb-8">ÜYELER</h1>
       
-      <div className="mb-6">
+      <div className="mb-6 flex items-center justify-between gap-4">
         <div className="relative max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
           <Input
@@ -137,6 +137,10 @@ const Members = () => {
             className="pl-10 border-gray-200"
           />
         </div>
+        <Button className="shrink-0">
+          <UserPlus className="w-4 h-4 mr-2" />
+          Yeni Üye Ekle
+        </Button>
       </div>
 
       <div className="rounded-md border">
