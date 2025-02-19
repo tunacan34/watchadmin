@@ -1,22 +1,32 @@
 
 import { useState } from "react";
 import {
-  Users,
   LayoutDashboard,
-  Settings,
+  Users,
+  Store,
   Package,
-  Mail,
+  Gavel,
+  Zap,
+  LayoutTemplate,
+  ClipboardList,
+  BarChart2,
+  PieChart,
   Menu,
   X,
-  UserPlus,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const menuItems = [
-  { icon: LayoutDashboard, label: "DASHBOARD", href: "#dashboard" },
-  { icon: Users, label: "KULLANICI YÖNETİMİ", href: "#user-management" },
-  { icon: Package, label: "İLAN YÖNETİMİ", href: "#ads-management" },
-  { icon: Mail, label: "Mesajlar", href: "#messages" },
-  { icon: Settings, label: "Ayarlar", href: "#settings" },
+  { icon: LayoutDashboard, label: "DASHBOARD", href: "/" },
+  { icon: Users, label: "ÜYELER", href: "/members" },
+  { icon: Store, label: "MAĞAZALAR", href: "/stores" },
+  { icon: Package, label: "İLANLAR", href: "/listings" },
+  { icon: Gavel, label: "MEZATLAR", href: "/auctions" },
+  { icon: Zap, label: "DOPINGLER", href: "/boosters" },
+  { icon: LayoutTemplate, label: "VİTRİN", href: "/showcase" },
+  { icon: ClipboardList, label: "İŞLEMLER", href: "/transactions" },
+  { icon: BarChart2, label: "ANALİZ", href: "/analysis" },
+  { icon: PieChart, label: "İSTATİSTİK", href: "/statistics" },
 ];
 
 export const AdminSidebar = () => {
@@ -47,13 +57,13 @@ export const AdminSidebar = () => {
             <ul className="space-y-4">
               {menuItems.map((item) => (
                 <li key={item.label}>
-                  <a
-                    href={item.href}
+                  <Link
+                    to={item.href}
                     className="flex items-center px-4 py-3 text-admin-muted hover:text-admin-foreground rounded-lg transition-all hover:bg-gray-50 group"
                   >
                     <item.icon className="w-5 h-5 mr-3 transition-colors" />
                     <span className="font-medium">{item.label}</span>
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
