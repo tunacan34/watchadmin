@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   Card,
@@ -34,7 +33,6 @@ interface Brand {
 }
 
 const Brands = () => {
-  // Dummy data
   const initialBrands: Brand[] = [
     {
       id: "1",
@@ -65,7 +63,7 @@ const Brands = () => {
     }
   ];
 
-  const [brands, setBrands] = useState<Brand[]>(initialBrands);
+  const [brands, setBrands] = useState<Brand[]>(initialBrands.sort((a, b) => a.name.localeCompare(b.name)));
   const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
   const [newBrandName, setNewBrandName] = useState("");
   const [newBrandLogo, setNewBrandLogo] = useState("");
@@ -85,7 +83,10 @@ const Brands = () => {
         logoUrl: newBrandLogo.trim() || undefined,
         subModels: []
       };
-      setBrands([...brands, newBrand]);
+      const updatedBrands = [...brands, newBrand].sort((a, b) => 
+        a.name.localeCompare(b.name)
+      );
+      setBrands(updatedBrands);
       setNewBrandName("");
       setNewBrandLogo("");
     }
@@ -105,9 +106,13 @@ const Brands = () => {
             name
           }));
           
+          const allModels = [...brand.subModels, ...newSubModels].sort((a, b) => 
+            a.name.localeCompare(b.name)
+          );
+          
           return {
             ...brand,
-            subModels: [...brand.subModels, ...newSubModels]
+            subModels: allModels
           };
         }
         return brand;
@@ -161,7 +166,6 @@ const Brands = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[300px,1fr] gap-6">
-        {/* Marka Listesi */}
         <Card>
           <CardHeader className="pb-4">
             <CardTitle className="text-lg">Markalar</CardTitle>
@@ -195,7 +199,6 @@ const Brands = () => {
           </CardContent>
         </Card>
 
-        {/* Alt Modeller */}
         {selectedBrand && (
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
