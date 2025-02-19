@@ -8,213 +8,174 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Search, Filter, AlertTriangle, MoreVertical } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Bell, Search, Send } from "lucide-react";
 import { format } from "date-fns";
+import { useToast } from "@/components/ui/use-toast";
 
-interface Report {
+interface Notification {
   id: string;
-  itemId: string;
-  itemType: "listing" | "auction";
-  itemTitle: string;
-  reportCount: number;
-  firstReportDate: Date;
-  lastReportDate: Date;
-  reports: {
-    id: string;
-    userId: string;
-    userName: string;
-    reportDate: Date;
-    reason: string;
-  }[];
+  title: string;
+  message: string;
+  sentAt: Date;
+  recipientCount: number;
 }
 
-// Örnek veri
-const dummyReports: Report[] = [
+// Örnek veriler
+const dummyNotifications: Notification[] = [
   {
-    id: "R1",
-    itemId: "L1",
-    itemType: "listing",
-    itemTitle: "Rolex Daytona 2024",
-    reportCount: 5,
-    firstReportDate: new Date("2024-03-01"),
-    lastReportDate: new Date("2024-03-15"),
-    reports: [
-      {
-        id: "REP1",
-        userId: "U1",
-        userName: "Ahmet Yılmaz",
-        reportDate: new Date("2024-03-01"),
-        reason: "Sahte ürün şüphesi"
-      },
-      {
-        id: "REP2",
-        userId: "U2",
-        userName: "Mehmet Demir",
-        reportDate: new Date("2024-03-15"),
-        reason: "Yanıltıcı bilgiler"
-      }
-    ]
+    id: "1",
+    title: "Sistem Bakımı",
+    message: "Yarın 02:00-04:00 arası sistem bakımda olacaktır.",
+    sentAt: new Date("2024-03-15T10:00:00"),
+    recipientCount: 1250
   },
   {
-    id: "R2",
-    itemId: "A1",
-    itemType: "auction",
-    itemTitle: "Patek Philippe Nautilus Mezat",
-    reportCount: 3,
-    firstReportDate: new Date("2024-03-10"),
-    lastReportDate: new Date("2024-03-12"),
-    reports: [
-      {
-        id: "REP3",
-        userId: "U3",
-        userName: "Ali Kaya",
-        reportDate: new Date("2024-03-10"),
-        reason: "Usulsüz mezat şüphesi"
-      }
-    ]
+    id: "2",
+    title: "Yeni Özellik",
+    message: "Artık ilanlarınıza video ekleyebilirsiniz!",
+    sentAt: new Date("2024-03-14T15:30:00"),
+    recipientCount: 1500
   }
 ];
 
 const Reports = () => {
-  const [reports] = useState<Report[]>(dummyReports);
+  const [notifications, setNotifications] = useState<Notification[]>(dummyNotifications);
+  const [newTitle, setNewTitle] = useState("");
+  const [newMessage, setNewMessage] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [typeFilter, setTypeFilter] = useState<"all" | "listing" | "auction">("all");
-  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
+  const { toast } = useToast();
 
-  const filteredReports = reports.filter(report => {
-    const matchesSearch = report.itemTitle.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = typeFilter === "all" || report.itemType === typeFilter;
-    return matchesSearch && matchesType;
-  });
+  const handleSendNotification = () => {
+    if (!newTitle.trim() || !newMessage.trim()) {
+      toast({
+        title: "Hata",
+        description: "Başlık ve mesaj alanları boş bırakılamaz.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-  const formatDateTime = (date: Date) => {
-    return format(date, "dd.MM.yyyy HH:mm");
+    const newNotification: Notification = {
+      id: Date.now().toString(),
+      title: newTitle,
+      message: newMessage,
+      sentAt: new Date(),
+      recipientCount: 1500 // Örnek değer
+    };
+
+    setNotifications([newNotification, ...notifications]);
+    setNewTitle("");
+    setNewMessage("");
+
+    toast({
+      title: "Bildirim gönderildi",
+      description: "Bildirim tüm kullanıcılara başarıyla gönderildi.",
+    });
   };
+
+  const filteredNotifications = notifications.filter(notification =>
+    notification.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    notification.message.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-semibold text-admin-foreground">İlan ve Mezat Bildirimleri</h1>
-        <div className="flex items-center gap-4">
+        <h1 className="text-3xl font-semibold text-admin-foreground">Bildirimler</h1>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Yeni Bildirim Gönder</CardTitle>
+          <CardDescription>
+            Tüm kullanıcılara toplu bildirim gönder
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="title">Başlık</Label>
+            <Input
+              id="title"
+              placeholder="Bildirim başlığı"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="message">Mesaj</Label>
+            <Textarea
+              id="message"
+              placeholder="Bildirim mesajı"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              rows={4}
+            />
+          </div>
+          <Button
+            className="w-full"
+            onClick={handleSendNotification}
+          >
+            <Send className="w-4 h-4 mr-2" />
+            Bildirimi Gönder
+          </Button>
+        </CardContent>
+      </Card>
+
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-admin-foreground">Gönderilen Bildirimler</h2>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
-              placeholder="İlan veya mezat ara..."
+              placeholder="Bildirimlerde ara..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 w-[300px]"
             />
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                <Filter className="w-4 h-4 mr-2" />
-                {typeFilter === "all" ? "Tüm Bildirimler" : 
-                 typeFilter === "listing" ? "İlan Bildirimleri" : 
-                 "Mezat Bildirimleri"}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setTypeFilter("all")}>
-                Tüm Bildirimler
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTypeFilter("listing")}>
-                İlan Bildirimleri
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTypeFilter("auction")}>
-                Mezat Bildirimleri
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        </div>
+
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Başlık</TableHead>
+                <TableHead>Mesaj</TableHead>
+                <TableHead>Gönderilme Tarihi</TableHead>
+                <TableHead>Alıcı Sayısı</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredNotifications.map((notification) => (
+                <TableRow key={notification.id}>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-2">
+                      <Bell className="w-4 h-4 text-muted-foreground" />
+                      {notification.title}
+                    </div>
+                  </TableCell>
+                  <TableCell>{notification.message}</TableCell>
+                  <TableCell>
+                    {format(notification.sentAt, "dd.MM.yyyy HH:mm")}
+                  </TableCell>
+                  <TableCell>{notification.recipientCount.toLocaleString()} kullanıcı</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </div>
-
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Başlık</TableHead>
-              <TableHead>Tip</TableHead>
-              <TableHead className="text-center">Bildirim Sayısı</TableHead>
-              <TableHead>İlk Bildirim</TableHead>
-              <TableHead>Son Bildirim</TableHead>
-              <TableHead className="text-right">İşlemler</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredReports.map((report) => (
-              <TableRow key={report.id}>
-                <TableCell className="font-medium">{report.itemTitle}</TableCell>
-                <TableCell>
-                  {report.itemType === "listing" ? "İlan" : "Mezat"}
-                </TableCell>
-                <TableCell className="text-center">
-                  <div className="flex items-center justify-center gap-2">
-                    <AlertTriangle className="w-4 h-4 text-yellow-500" />
-                    {report.reportCount}
-                  </div>
-                </TableCell>
-                <TableCell>{formatDateTime(report.firstReportDate)}</TableCell>
-                <TableCell>{formatDateTime(report.lastReportDate)}</TableCell>
-                <TableCell className="text-right">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setSelectedReport(report)}
-                  >
-                    <MoreVertical className="w-4 h-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      <Dialog open={!!selectedReport} onOpenChange={() => setSelectedReport(null)}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-yellow-500" />
-              Bildirim Detayları: {selectedReport?.itemTitle}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="mt-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Bildiren Kullanıcı</TableHead>
-                  <TableHead>Bildirim Tarihi</TableHead>
-                  <TableHead>Bildirim Nedeni</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {selectedReport?.reports.map((report) => (
-                  <TableRow key={report.id}>
-                    <TableCell>{report.userName}</TableCell>
-                    <TableCell>{formatDateTime(report.reportDate)}</TableCell>
-                    <TableCell>{report.reason}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
