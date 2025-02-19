@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import {
   Card,
@@ -80,8 +81,14 @@ const Brands = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
+        // Ensure we only proceed if we have a string result
         if (typeof reader.result === 'string') {
-          setNewBrandLogo(reader.result);
+          const updatedBrands = brands.map(brand => 
+            brand.id === selectedBrand?.id 
+              ? { ...brand, logoUrl: reader.result }
+              : brand
+          );
+          setBrands(updatedBrands);
         }
       };
       reader.readAsDataURL(file);
