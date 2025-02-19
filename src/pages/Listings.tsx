@@ -191,6 +191,7 @@ const Listings = () => {
       <h1 className="text-3xl font-semibold text-admin-foreground mb-8">İLANLAR</h1>
 
       <div className="flex flex-col gap-6">
+        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4">
           <div className="bg-yellow-50 border border-yellow-100 rounded-lg p-4">
             <div className="text-yellow-800 font-medium">Onay Bekleyen</div>
@@ -222,82 +223,93 @@ const Listings = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-            <Input
-              type="search"
-              placeholder="İlan adı veya satıcı ara..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+        {/* Filters and Sort Controls */}
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          {/* Search and Filters - Left Side */}
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="relative max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <Input
+                type="search"
+                placeholder="İlan adı veya satıcı ara..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 border-gray-200"
+              />
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  {statusFilter === "all" ? "Tüm Durumlar" : 
+                   statusFilter === "active" ? "Yayında" :
+                   statusFilter === "pending" ? "Onay Bekliyor" : 
+                   statusFilter === "rejected" ? "Red" :
+                   statusFilter === "inactive" ? "Pasif" : "Satıldı"}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => setStatusFilter("all")}>
+                  Tüm Durumlar
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStatusFilter("active")}>
+                  Yayında
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStatusFilter("pending")}>
+                  Onay Bekliyor
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStatusFilter("rejected")}>
+                  Red
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStatusFilter("inactive")}>
+                  Pasif
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setStatusFilter("sold")}>
+                  Satıldı
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
-                <Filter className="h-4 w-4" />
-                {statusFilter === "all" ? "Tüm Durumlar" : getStatusBadge(statusFilter)}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setStatusFilter("all")}>
-                Tüm Durumlar
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("active")}>
-                Yayında
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("pending")}>
-                Onay Bekliyor
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("rejected")}>
-                Red
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("inactive")}>
-                Pasif
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter("sold")}>
-                Satıldı
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+
+          {/* Sort Controls - Right Side */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500 mr-2">Sırala:</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => toggleSort("date")}
+              className={sortField === "date" ? "bg-muted" : ""}
+            >
+              Eklenme Tarihi {sortField === "date" && (sortDirection === "asc" ? "↑" : "↓")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => toggleSort("price")}
+              className={sortField === "price" ? "bg-muted" : ""}
+            >
+              Fiyat {sortField === "price" && (sortDirection === "asc" ? "↑" : "↓")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => toggleSort("views")}
+              className={sortField === "views" ? "bg-muted" : ""}
+            >
+              Görüntülenme {sortField === "views" && (sortDirection === "asc" ? "↑" : "↓")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => toggleSort("favorites")}
+              className={sortField === "favorites" ? "bg-muted" : ""}
+            >
+              Favori {sortField === "favorites" && (sortDirection === "asc" ? "↑" : "↓")}
+            </Button>
+          </div>
         </div>
 
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => toggleSort("date")}
-            className={sortField === "date" ? "bg-muted" : ""}
-          >
-            Eklenme Tarihi {sortField === "date" && (sortDirection === "asc" ? "↑" : "↓")}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => toggleSort("price")}
-            className={sortField === "price" ? "bg-muted" : ""}
-          >
-            Fiyat {sortField === "price" && (sortDirection === "asc" ? "↑" : "↓")}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => toggleSort("views")}
-            className={sortField === "views" ? "bg-muted" : ""}
-          >
-            Görüntülenme {sortField === "views" && (sortDirection === "asc" ? "↑" : "↓")}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => toggleSort("favorites")}
-            className={sortField === "favorites" ? "bg-muted" : ""}
-          >
-            Favori {sortField === "favorites" && (sortDirection === "asc" ? "↑" : "↓")}
-          </Button>
-        </div>
-
+        {/* Table */}
         <div className="rounded-lg border">
           <Table>
             <TableHeader>
@@ -416,6 +428,7 @@ const Listings = () => {
           </Table>
         </div>
 
+        {/* Pagination */}
         {pageCount > 1 && (
           <Pagination>
             <PaginationContent>
