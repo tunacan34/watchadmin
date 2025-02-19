@@ -1,3 +1,4 @@
+
 import {
   Table,
   TableBody,
@@ -23,7 +24,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Store, Edit, Eye, Package, Search, Crown, } from "lucide-react";
+import { Store, Edit, Eye, Package, Search, Crown, PlusCircle } from "lucide-react";
 import { format, addMonths } from "date-fns";
 import { useState } from "react";
 
@@ -122,7 +123,13 @@ const Stores = () => {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-semibold text-admin-foreground mb-8">MAĞAZALAR</h1>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-semibold text-admin-foreground">MAĞAZALAR</h1>
+        <Button className="flex items-center gap-2">
+          <PlusCircle className="w-4 h-4" />
+          Yeni Mağaza Oluştur
+        </Button>
+      </div>
       
       <div className="mb-6 flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
