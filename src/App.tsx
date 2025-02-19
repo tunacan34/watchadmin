@@ -15,6 +15,10 @@ import Showcase from "./pages/Showcase";
 import Transactions from "./pages/Transactions";
 import Analysis from "./pages/Analysis";
 import Statistics from "./pages/Statistics";
+import Documents from "./pages/Documents";
+import Brands from "./pages/Brands";
+import Support from "./pages/Support";
+import Comments from "./pages/Comments";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +39,10 @@ const App = () => (
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/analysis" element={<Analysis />} />
           <Route path="/statistics" element={<Statistics />} />
+          <Route path="/documents" element={<Documents />} />
+          <Route path="/brands" element={<Brands />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/comments" element={<Comments />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

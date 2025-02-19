@@ -13,6 +13,10 @@ import {
   PieChart,
   Menu,
   X,
+  FileText,
+  Tag,
+  MessageSquare,
+  MessageCircle,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -27,6 +31,10 @@ const menuItems = [
   { icon: ClipboardList, label: "İŞLEMLER", href: "/transactions" },
   { icon: BarChart2, label: "ANALİZ", href: "/analysis" },
   { icon: PieChart, label: "İSTATİSTİK", href: "/statistics" },
+  { icon: FileText, label: "BELGELER", href: "/documents" },
+  { icon: Tag, label: "MARKA MODEL", href: "/brands" },
+  { icon: MessageSquare, label: "DESTEK TALEPLERİ", href: "/support" },
+  { icon: MessageCircle, label: "YORUMLAR", href: "/comments" },
 ];
 
 export const AdminSidebar = () => {
