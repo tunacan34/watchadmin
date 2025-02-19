@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   Card,
@@ -81,11 +80,10 @@ const Brands = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        // Ensure we only proceed if we have a string result
         if (typeof reader.result === 'string') {
           const updatedBrands = brands.map(brand => 
             brand.id === selectedBrand?.id 
-              ? { ...brand, logoUrl: reader.result }
+              ? { ...brand, logoUrl: reader.result as string }
               : brand
           );
           setBrands(updatedBrands);
@@ -284,7 +282,7 @@ const Brands = () => {
                           if (typeof reader.result === 'string') {
                             const updatedBrands = brands.map(brand => 
                               brand.id === selectedBrand.id 
-                                ? { ...brand, logoUrl: reader.result }
+                                ? { ...brand, logoUrl: reader.result as string }
                                 : brand
                             );
                             setBrands(updatedBrands);
