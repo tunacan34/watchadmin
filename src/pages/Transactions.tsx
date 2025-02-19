@@ -1,4 +1,3 @@
-
 import {
   Table,
   TableBody,
@@ -7,8 +6,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Package, Store, Trophy, Target } from "lucide-react";
+import { Package, Store, Trophy, Target, FileText, RotateCcw, MoreVertical } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 interface Transaction {
   id: string;
@@ -26,7 +32,6 @@ interface Transaction {
 }
 
 const Transactions = () => {
-  // Örnek işlem verileri
   const transactions: Transaction[] = [
     {
       id: "1",
@@ -138,6 +143,14 @@ const Transactions = () => {
     });
   };
 
+  const handleSendInvoice = (transactionId: string) => {
+    console.log("Fatura gönderiliyor:", transactionId);
+  };
+
+  const handleRefund = (transactionId: string) => {
+    console.log("İptal/İade işlemi başlatılıyor:", transactionId);
+  };
+
   return (
     <div className="p-8">
       <h1 className="text-3xl font-semibold text-admin-foreground mb-6">İŞLEMLER</h1>
@@ -154,6 +167,7 @@ const Transactions = () => {
               <TableHead>Satın Alma</TableHead>
               <TableHead>Başlangıç</TableHead>
               <TableHead>Bitiş</TableHead>
+              <TableHead className="text-right">İşlemler</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -183,6 +197,32 @@ const Transactions = () => {
                 <TableCell>{formatDate(transaction.purchaseDate)}</TableCell>
                 <TableCell>{formatDate(transaction.startDate)}</TableCell>
                 <TableCell>{formatDate(transaction.endDate)}</TableCell>
+                <TableCell className="text-right">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Menüyü aç</span>
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem 
+                        onClick={() => handleSendInvoice(transaction.id)}
+                        className="flex items-center gap-2"
+                      >
+                        <FileText className="w-4 h-4" />
+                        Fatura Gönder
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={() => handleRefund(transaction.id)}
+                        className="flex items-center gap-2 text-red-600"
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                        İptal/İade
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
