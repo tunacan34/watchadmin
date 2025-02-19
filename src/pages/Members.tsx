@@ -311,6 +311,10 @@ const Members = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedMembers = filteredMembers.slice(startIndex, startIndex + itemsPerPage);
 
+  const changePage = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className="p-8">
       <h1 className="text-3xl font-semibold text-admin-foreground mb-8">ÜYELER</h1>
@@ -504,20 +508,21 @@ const Members = () => {
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious 
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                onClick={() => changePage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
+                aria-disabled={currentPage === 1}
               />
             </PaginationItem>
             
             {currentPage > 2 && (
               <PaginationItem>
-                <PaginationLink onClick={() => setCurrentPage(1)}>1</PaginationLink>
+                <PaginationLink onClick={() => changePage(1)}>1</PaginationLink>
               </PaginationItem>
             )}
             
             {currentPage > 1 && (
               <PaginationItem>
-                <PaginationLink onClick={() => setCurrentPage(currentPage - 1)}>
+                <PaginationLink onClick={() => changePage(currentPage - 1)}>
                   {currentPage - 1}
                 </PaginationLink>
               </PaginationItem>
@@ -529,7 +534,7 @@ const Members = () => {
             
             {currentPage < totalPages && (
               <PaginationItem>
-                <PaginationLink onClick={() => setCurrentPage(currentPage + 1)}>
+                <PaginationLink onClick={() => changePage(currentPage + 1)}>
                   {currentPage + 1}
                 </PaginationLink>
               </PaginationItem>
@@ -537,7 +542,7 @@ const Members = () => {
             
             {currentPage < totalPages - 1 && (
               <PaginationItem>
-                <PaginationLink onClick={() => setCurrentPage(totalPages)}>
+                <PaginationLink onClick={() => changePage(totalPages)}>
                   {totalPages}
                 </PaginationLink>
               </PaginationItem>
@@ -545,8 +550,9 @@ const Members = () => {
 
             <PaginationItem>
               <PaginationNext 
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                onClick={() => changePage(Math.min(totalPages, currentPage + 1))}
                 disabled={currentPage === totalPages}
+                aria-disabled={currentPage === totalPages}
               />
             </PaginationItem>
           </PaginationContent>
