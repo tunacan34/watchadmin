@@ -23,6 +23,7 @@ import Comments from "./pages/Comments";
 import Settings from "./pages/Settings";
 import GAnalytics from "./pages/GAnalytics";
 import Reports from "./pages/Reports";
+import Notifications from "./pages/Notifications";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ const App = () => (
           <Route path="/comments" element={<Layout><Comments /></Layout>} />
           <Route path="/settings" element={<Layout><Settings /></Layout>} />
           <Route path="/reports" element={<Layout><Reports /></Layout>} />
+          <Route path="/notifications" element={<Layout><Notifications /></Layout>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
