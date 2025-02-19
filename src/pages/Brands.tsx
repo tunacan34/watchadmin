@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import {
   Card,
@@ -75,6 +76,20 @@ const Brands = () => {
     brand.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Dosyayı base64'e çevir
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setNewBrandLogo(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleAddBrand = () => {
     if (newBrandName.trim()) {
       const newBrand: Brand = {
@@ -151,13 +166,43 @@ const Brands = () => {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="logo">Logo URL (Opsiyonel)</Label>
-                <Input
-                  id="logo"
-                  value={newBrandLogo}
-                  onChange={(e) => setNewBrandLogo(e.target.value)}
-                  placeholder="Logo URL'sini giriniz"
-                />
+                <Label>Logo</Label>
+                <div className="space-y-4">
+                  {newBrandLogo && (
+                    <div className="flex items-center gap-4">
+                      <Avatar className="w-16 h-16">
+                        <AvatarImage src={newBrandLogo} alt="Yüklenen Logo" />
+                        <AvatarFallback>{newBrandName.substring(0, 2)}</AvatarFallback>
+                      </Avatar>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setNewBrandLogo("")}
+                      >
+                        Logoyu Kaldır
+                      </Button>
+                    </div>
+                  )}
+                  <div className="grid gap-2">
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        className="flex-1"
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="url"
+                        value={newBrandLogo}
+                        onChange={(e) => setNewBrandLogo(e.target.value)}
+                        placeholder="veya logo URL'si girin"
+                        className="flex-1"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
               <Button onClick={handleAddBrand}>Ekle</Button>
             </div>
