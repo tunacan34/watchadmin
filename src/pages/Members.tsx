@@ -1,4 +1,3 @@
-
 import {
   Table,
   TableBody,
@@ -30,7 +29,7 @@ const members = [
     city: "İstanbul",
     store: "Yılmaz Saat",
     storeType: "premium",
-    verified: true,
+    verified: ["SMS", "TC"],
     joinDate: new Date("2024-01-15"),
   },
   {
@@ -42,7 +41,7 @@ const members = [
     city: "Ankara",
     store: null,
     storeType: null,
-    verified: true,
+    verified: ["TC"],
     joinDate: new Date("2024-02-01"),
   },
   {
@@ -54,7 +53,7 @@ const members = [
     city: "İzmir",
     store: "Kaya Saat",
     storeType: "standard",
-    verified: true,
+    verified: ["SMS", "TC"],
     joinDate: new Date("2024-02-15"),
   },
   {
@@ -66,7 +65,7 @@ const members = [
     city: "Bursa",
     store: null,
     storeType: null,
-    verified: false,
+    verified: [],
     joinDate: new Date("2024-03-01"),
   },
   {
@@ -78,7 +77,7 @@ const members = [
     city: "Antalya",
     store: "Şahin Saat",
     storeType: "premium",
-    verified: true,
+    verified: ["SMS"],
     joinDate: new Date("2024-03-15"),
   },
   {
@@ -90,7 +89,7 @@ const members = [
     city: "İstanbul",
     store: null,
     storeType: null,
-    verified: false,
+    verified: [],
     joinDate: new Date("2024-03-20"),
   },
   {
@@ -102,7 +101,7 @@ const members = [
     city: "Ankara",
     store: "Öztürk Saat",
     storeType: "standard",
-    verified: true,
+    verified: ["TC"],
     joinDate: new Date("2024-03-25"),
   },
   {
@@ -114,7 +113,7 @@ const members = [
     city: "İzmir",
     store: null,
     storeType: null,
-    verified: true,
+    verified: ["SMS"],
     joinDate: new Date("2024-04-01"),
   },
   {
@@ -126,7 +125,7 @@ const members = [
     city: "Bursa",
     store: "Aydın Saat",
     storeType: "premium",
-    verified: true,
+    verified: ["SMS", "TC"],
     joinDate: new Date("2024-04-05"),
   },
   {
@@ -138,10 +137,9 @@ const members = [
     city: "Antalya",
     store: null,
     storeType: null,
-    verified: false,
+    verified: [],
     joinDate: new Date("2024-04-10"),
   },
-  // 10 yeni üye ekleniyor
   {
     id: 11,
     avatar: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
@@ -151,7 +149,7 @@ const members = [
     city: "İzmir",
     store: "Yıldırım Saat",
     storeType: "premium",
-    verified: true,
+    verified: ["SMS", "TC"],
     joinDate: new Date("2024-04-15"),
   },
   {
@@ -163,7 +161,7 @@ const members = [
     city: "Ankara",
     store: null,
     storeType: null,
-    verified: false,
+    verified: [],
     joinDate: new Date("2024-04-16"),
   },
   {
@@ -175,7 +173,7 @@ const members = [
     city: "İstanbul",
     store: "Özdemir Saat",
     storeType: "standard",
-    verified: true,
+    verified: ["SMS"],
     joinDate: new Date("2024-04-17"),
   },
   {
@@ -187,7 +185,7 @@ const members = [
     city: "Antalya",
     store: null,
     storeType: null,
-    verified: true,
+    verified: ["TC"],
     joinDate: new Date("2024-04-18"),
   },
   {
@@ -199,7 +197,7 @@ const members = [
     city: "Bursa",
     store: "Yalçın Saat",
     storeType: "premium",
-    verified: true,
+    verified: ["SMS", "TC"],
     joinDate: new Date("2024-04-19"),
   },
   {
@@ -211,7 +209,7 @@ const members = [
     city: "İzmir",
     store: null,
     storeType: null,
-    verified: false,
+    verified: [],
     joinDate: new Date("2024-04-20"),
   },
   {
@@ -223,7 +221,7 @@ const members = [
     city: "Ankara",
     store: "Çetin Saat",
     storeType: "standard",
-    verified: true,
+    verified: ["SMS", "TC"],
     joinDate: new Date("2024-04-21"),
   },
   {
@@ -235,7 +233,7 @@ const members = [
     city: "İstanbul",
     store: null,
     storeType: null,
-    verified: true,
+    verified: ["SMS"],
     joinDate: new Date("2024-04-22"),
   },
   {
@@ -247,7 +245,7 @@ const members = [
     city: "Antalya",
     store: "Güneş Saat",
     storeType: "premium",
-    verified: true,
+    verified: ["SMS", "TC"],
     joinDate: new Date("2024-04-23"),
   },
   {
@@ -259,7 +257,7 @@ const members = [
     city: "Bursa",
     store: null,
     storeType: null,
-    verified: false,
+    verified: [],
     joinDate: new Date("2024-04-24"),
   },
 ];
@@ -267,20 +265,36 @@ const members = [
 const Members = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<"all" | "store" | "member">("all");
+  const [verificationFilter, setVerificationFilter] = useState<"all" | "sms-tc" | "sms" | "tc" | "unverified">("all");
 
   const filteredMembers = members.filter((member) => {
     const matchesSearch = Object.values(member).some((value) =>
       value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    switch (filter) {
-      case "store":
-        return matchesSearch && member.store !== null;
-      case "member":
-        return matchesSearch && member.store === null;
-      default:
-        return matchesSearch;
+    const matchesStoreFilter = filter === "all" 
+      ? true 
+      : filter === "store" 
+        ? member.store !== null 
+        : member.store === null;
+
+    let matchesVerification = true;
+    switch (verificationFilter) {
+      case "sms-tc":
+        matchesVerification = member.verified.includes("SMS") && member.verified.includes("TC");
+        break;
+      case "sms":
+        matchesVerification = member.verified.includes("SMS");
+        break;
+      case "tc":
+        matchesVerification = member.verified.includes("TC");
+        break;
+      case "unverified":
+        matchesVerification = member.verified.length === 0;
+        break;
     }
+
+    return matchesSearch && matchesStoreFilter && matchesVerification;
   });
 
   return (
@@ -288,7 +302,7 @@ const Members = () => {
       <h1 className="text-3xl font-semibold text-admin-foreground mb-8">ÜYELER</h1>
       
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           <div className="relative max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <Input
@@ -299,7 +313,7 @@ const Members = () => {
               className="pl-10 border-gray-200"
             />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button 
               variant={filter === "all" ? "default" : "outline"}
               onClick={() => setFilter("all")}
@@ -326,6 +340,43 @@ const Members = () => {
               Üye
             </Button>
           </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button 
+              variant={verificationFilter === "all" ? "default" : "outline"}
+              onClick={() => setVerificationFilter("all")}
+              size="sm"
+            >
+              Tüm Doğrulamalar
+            </Button>
+            <Button 
+              variant={verificationFilter === "sms-tc" ? "default" : "outline"}
+              onClick={() => setVerificationFilter("sms-tc")}
+              size="sm"
+            >
+              SMS + TC
+            </Button>
+            <Button 
+              variant={verificationFilter === "sms" ? "default" : "outline"}
+              onClick={() => setVerificationFilter("sms")}
+              size="sm"
+            >
+              SMS
+            </Button>
+            <Button 
+              variant={verificationFilter === "tc" ? "default" : "outline"}
+              onClick={() => setVerificationFilter("tc")}
+              size="sm"
+            >
+              TC
+            </Button>
+            <Button 
+              variant={verificationFilter === "unverified" ? "default" : "outline"}
+              onClick={() => setVerificationFilter("unverified")}
+              size="sm"
+            >
+              Doğrulanmamış
+            </Button>
+          </div>
         </div>
         <Button className="shrink-0">
           <UserPlus className="w-4 h-4 mr-2" />
@@ -344,7 +395,7 @@ const Members = () => {
               <TableHead>Şehir</TableHead>
               <TableHead>Mağaza</TableHead>
               <TableHead>Üyelik Tarihi</TableHead>
-              <TableHead>Durum</TableHead>
+              <TableHead>Doğrulama</TableHead>
               <TableHead className="text-right">İşlemler</TableHead>
             </TableRow>
           </TableHeader>
@@ -390,10 +441,19 @@ const Members = () => {
                 </TableCell>
                 <TableCell>{format(member.joinDate, 'dd.MM.yyyy')}</TableCell>
                 <TableCell>
-                  {member.verified ? (
-                    <div className="flex items-center gap-1 text-green-600">
-                      <BadgeCheck className="w-4 h-4" />
-                      <span className="text-sm font-medium">Doğrulanmış</span>
+                  {member.verified.length > 0 ? (
+                    <div className="flex items-center gap-2">
+                      <BadgeCheck className="w-4 h-4 text-green-600" />
+                      <div className="flex gap-1">
+                        {member.verified.map((type, index) => (
+                          <span 
+                            key={type}
+                            className="text-xs px-1.5 py-0.5 rounded-full bg-green-100 text-green-700 font-medium"
+                          >
+                            {type}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   ) : (
                     <span className="text-sm text-gray-500">Doğrulanmamış</span>
