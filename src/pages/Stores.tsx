@@ -253,7 +253,7 @@ const Stores = () => {
             <TableRow>
               <TableHead>Logo</TableHead>
               <TableHead>Mağaza Adı</TableHead>
-              <TableHead>Abonelik</TableHead>
+              <TableHead>Başlangıç Tarihi</TableHead>
               <TableHead>Mağaza Türü</TableHead>
               <TableHead>İlan Sayısı</TableHead>
               <TableHead>Mezat Sayısı</TableHead>
@@ -280,24 +280,26 @@ const Stores = () => {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="space-y-1">
-                    <div className="text-sm">{format(store.subscriptionDate, 'dd.MM.yyyy')}</div>
-                    <div className="text-sm text-gray-500">{format(store.subscriptionEndDate, 'dd.MM.yyyy')}</div>
-                  </div>
+                  <div className="text-sm">{format(store.subscriptionDate, 'dd.MM.yyyy')}</div>
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center gap-2">
-                    {store.type === "premium" ? (
-                      <>
-                        <Crown className="w-4 h-4 text-yellow-500" />
-                        <span className="text-yellow-500 font-medium">Premium</span>
-                      </>
-                    ) : (
-                      <>
-                        <Store className="w-4 h-4 text-gray-500" />
-                        <span className="text-gray-500">Standart</span>
-                      </>
-                    )}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      {store.type === "premium" ? (
+                        <>
+                          <Crown className="w-4 h-4 text-yellow-500" />
+                          <span className="text-yellow-500 font-medium">Premium</span>
+                        </>
+                      ) : (
+                        <>
+                          <Store className="w-4 h-4 text-gray-500" />
+                          <span className="text-gray-500">Standart</span>
+                        </>
+                      )}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Bitiş: {format(store.subscriptionEndDate, 'dd.MM.yyyy')}
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell>{store.activeListings}</TableCell>
@@ -344,16 +346,17 @@ const Stores = () => {
         </div>
         <Pagination>
           <PaginationContent>
-            <PaginationItem>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                disabled={currentPage === 1}
-              >
-                Önceki
-              </Button>
-            </PaginationItem>
+            {currentPage > 1 && (
+              <PaginationItem>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                >
+                  Önceki
+                </Button>
+              </PaginationItem>
+            )}
             
             {currentPage > 2 && (
               <PaginationItem>
@@ -412,16 +415,17 @@ const Stores = () => {
               </PaginationItem>
             )}
 
-            <PaginationItem>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                disabled={currentPage === totalPages}
-              >
-                Sonraki
-              </Button>
-            </PaginationItem>
+            {currentPage < totalPages && (
+              <PaginationItem>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                >
+                  Sonraki
+                </Button>
+              </PaginationItem>
+            )}
           </PaginationContent>
         </Pagination>
       </div>
