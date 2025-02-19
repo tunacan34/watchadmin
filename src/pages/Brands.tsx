@@ -246,10 +246,19 @@ const Brands = () => {
           <Card className="w-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
               <div className="flex items-center gap-3">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={selectedBrand.logoUrl} alt={selectedBrand.name} />
-                  <AvatarFallback className="text-sm">{selectedBrand.name.substring(0, 2)}</AvatarFallback>
-                </Avatar>
+                <div className="w-[200px] h-[100px] relative overflow-hidden rounded-md border">
+                  {selectedBrand.logoUrl ? (
+                    <img 
+                      src={selectedBrand.logoUrl} 
+                      alt={selectedBrand.name}
+                      className="w-full h-full object-contain"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-muted">
+                      <span className="text-2xl text-muted-foreground">{selectedBrand.name.substring(0, 2)}</span>
+                    </div>
+                  )}
+                </div>
                 <CardTitle className="text-lg">{selectedBrand.name} Modelleri</CardTitle>
               </div>
               <div className="flex gap-2">
