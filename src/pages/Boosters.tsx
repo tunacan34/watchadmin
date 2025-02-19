@@ -27,7 +27,143 @@ interface Booster {
 }
 
 const Boosters = () => {
-  const [boosters, setBoosters] = useState<Booster[]>([]);
+  // Örnek veri oluşturma
+  const dummyData: Booster[] = [
+    {
+      id: "1",
+      name: "Başlangıç Paketi",
+      description: "Yeni üyeler için ideal başlangıç paketi",
+      listingCount: 5,
+      promoCount: 1,
+      duration: 30,
+      price: 49.99,
+      type: "listing",
+      userType: "member"
+    },
+    {
+      id: "2",
+      name: "Standart Paket",
+      description: "En çok tercih edilen paket",
+      listingCount: 10,
+      promoCount: 2,
+      duration: 30,
+      price: 89.99,
+      type: "listing",
+      userType: "member"
+    },
+    {
+      id: "3",
+      name: "Premium Paket",
+      description: "Profesyonel satıcılar için özel paket",
+      listingCount: 20,
+      promoCount: 5,
+      duration: 45,
+      price: 159.99,
+      type: "listing",
+      userType: "standard_store"
+    },
+    {
+      id: "4",
+      name: "Mini Paket",
+      description: "Tek seferlik satışlar için uygun paket",
+      listingCount: 3,
+      promoCount: 0,
+      duration: 15,
+      price: 29.99,
+      type: "listing",
+      userType: "member"
+    },
+    {
+      id: "5",
+      name: "Gold Paket",
+      description: "Yüksek hacimli satıcılar için ideal",
+      listingCount: 30,
+      promoCount: 8,
+      duration: 60,
+      price: 249.99,
+      type: "listing",
+      userType: "standard_store"
+    },
+    {
+      id: "6",
+      name: "Platinum Paket",
+      description: "Maximum görünürlük ve satış fırsatı",
+      listingCount: 50,
+      promoCount: 15,
+      duration: 90,
+      price: 399.99,
+      type: "listing",
+      userType: "standard_store"
+    },
+    {
+      id: "7",
+      name: "Ekonomik Paket",
+      description: "Uygun fiyatlı temel paket",
+      listingCount: 8,
+      promoCount: 1,
+      duration: 30,
+      price: 69.99,
+      type: "listing",
+      userType: "member"
+    },
+    {
+      id: "8",
+      name: "Profesyonel Paket",
+      description: "İş profesyonelleri için özel seçim",
+      listingCount: 25,
+      promoCount: 6,
+      duration: 45,
+      price: 199.99,
+      type: "listing",
+      userType: "standard_store"
+    },
+    {
+      id: "9",
+      name: "Elite Paket",
+      description: "Üst düzey satıcılar için premium çözüm",
+      listingCount: 40,
+      promoCount: 12,
+      duration: 60,
+      price: 299.99,
+      type: "listing",
+      userType: "standard_store"
+    },
+    {
+      id: "10",
+      name: "Haftalık Paket",
+      description: "Kısa süreli satışlar için ideal",
+      listingCount: 4,
+      promoCount: 1,
+      duration: 7,
+      price: 19.99,
+      type: "listing",
+      userType: "member"
+    },
+    {
+      id: "11",
+      name: "Ultra Paket",
+      description: "Maksimum ilan ve promosyon avantajı",
+      listingCount: 60,
+      promoCount: 20,
+      duration: 90,
+      price: 499.99,
+      type: "listing",
+      userType: "standard_store"
+    },
+    {
+      id: "12",
+      name: "Deneme Paketi",
+      description: "Yeni başlayanlar için test paketi",
+      listingCount: 2,
+      promoCount: 1,
+      duration: 15,
+      price: 14.99,
+      type: "listing",
+      userType: "member"
+    }
+  ];
+
+  const [boosters, setBoosters] = useState<Booster[]>(dummyData);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
