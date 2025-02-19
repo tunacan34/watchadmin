@@ -1,26 +1,30 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Store, Bell, FileText, ShoppingBag, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Users, Store, Bell, FileText, ShoppingBag, ArrowUpRight, ArrowDownRight, DollarSign, Clock, AlertTriangle, Star, TrendingUp, UserCheck, Building, Package, Shield } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
+import { Progress } from "@/components/ui/progress";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area } from "recharts";
 
 const Index = () => {
-  // Örnek veriler
   const activityData = [
-    { name: "Pzt", users: 120, listings: 45, auctions: 25 },
-    { name: "Sal", users: 132, listings: 48, auctions: 28 },
-    { name: "Çar", users: 145, listings: 52, auctions: 30 },
-    { name: "Per", users: 155, listings: 58, auctions: 32 },
-    { name: "Cum", users: 148, listings: 62, auctions: 35 },
+    { name: "Pzt", users: 120, listings: 45, auctions: 25, revenue: 15000 },
+    { name: "Sal", users: 132, listings: 48, auctions: 28, revenue: 18000 },
+    { name: "Çar", users: 145, listings: 52, auctions: 30, revenue: 21000 },
+    { name: "Per", users: 155, listings: 58, auctions: 32, revenue: 25000 },
+    { name: "Cum", users: 148, listings: 62, auctions: 35, revenue: 23000 },
+    { name: "Cmt", users: 160, listings: 65, auctions: 38, revenue: 28000 },
+    { name: "Paz", users: 142, listings: 55, auctions: 30, revenue: 20000 },
   ];
 
-  const revenueData = [
-    { name: "1", value: 45, amount: 450000 },
-    { name: "2", value: 30, amount: 300000 },
-    { name: "3", value: 25, amount: 250000 },
+  const categoryData = [
+    { name: "Saat", value: 35, sales: 450000 },
+    { name: "Takı", value: 25, sales: 320000 },
+    { name: "Koleksiyon", value: 20, sales: 280000 },
+    { name: "Antika", value: 15, sales: 180000 },
+    { name: "Diğer", value: 5, sales: 70000 },
   ];
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
   const metrics = [
     {
@@ -50,19 +54,77 @@ const Index = () => {
       change: "+5.7%",
       trend: "up",
       icon: FileText
+    },
+    {
+      title: "Günlük Gelir",
+      value: "₺28,450",
+      change: "+15.3%",
+      trend: "up",
+      icon: DollarSign
+    },
+    {
+      title: "Aktif Mağazalar",
+      value: "156",
+      change: "+3.2%",
+      trend: "up",
+      icon: Building
+    },
+    {
+      title: "Ort. Oturum Süresi",
+      value: "4m 32s",
+      change: "-1.8%",
+      trend: "down",
+      icon: Clock
+    },
+    {
+      title: "Premium Üyeler",
+      value: "324",
+      change: "+9.1%",
+      trend: "up",
+      icon: Star
+    }
+  ];
+
+  const platformStats = [
+    {
+      title: "Sistem Performansı",
+      value: 95,
+      info: "Sunucu yanıt süresi: 120ms",
+      icon: TrendingUp
+    },
+    {
+      title: "Müşteri Memnuniyeti",
+      value: 88,
+      info: "Son 30 gün",
+      icon: UserCheck
+    },
+    {
+      title: "İşlem Güvenliği",
+      value: 99,
+      info: "Başarılı işlem oranı",
+      icon: Shield
     }
   ];
 
   const recentActivity = [
-    { id: 1, type: "user", text: "Yeni üye kaydı: Ahmet Y.", time: "5 dk önce" },
-    { id: 2, type: "listing", text: "Yeni ilan: Rolex Daytona", time: "12 dk önce" },
-    { id: 3, type: "auction", text: "Mezat tamamlandı: Vintage Saat", time: "25 dk önce" },
-    { id: 4, type: "store", text: "Yeni mağaza: Luxury Watches", time: "45 dk önce" },
+    { id: 1, type: "user", text: "Yeni üye kaydı: Ahmet Y.", time: "5 dk önce", amount: null },
+    { id: 2, type: "listing", text: "Yeni ilan: Rolex Daytona", time: "12 dk önce", amount: "₺450,000" },
+    { id: 3, type: "auction", text: "Mezat tamamlandı: Vintage Saat", time: "25 dk önce", amount: "₺85,000" },
+    { id: 4, type: "store", text: "Yeni mağaza: Luxury Watches", time: "45 dk önce", amount: null },
+    { id: 5, type: "transaction", text: "Başarılı satış: Patek Philippe", time: "1 saat önce", amount: "₺750,000" },
+    { id: 6, type: "alert", text: "Yüksek riskli işlem tespit edildi", time: "2 saat önce", amount: null }
+  ];
+
+  const topStores = [
+    { name: "Luxury Time", sales: 450000, items: 45, rating: 4.8 },
+    { name: "VintageWorld", sales: 380000, items: 38, rating: 4.7 },
+    { name: "Elite Watches", sales: 320000, items: 32, rating: 4.9 },
+    { name: "Classic Collection", sales: 280000, items: 28, rating: 4.6 }
   ];
 
   return (
     <div className="p-4 space-y-4">
-      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {metrics.map((metric) => (
           <Card key={metric.title} className="overflow-hidden">
             <CardContent className="p-3">
@@ -79,22 +141,41 @@ const Index = () => {
         ))}
       </div>
 
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
+        {platformStats.map((stat) => (
+          <Card key={stat.title} className="overflow-hidden">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <stat.icon className="w-4 h-4 text-muted-foreground" />
+                  <h3 className="text-sm font-medium">{stat.title}</h3>
+                </div>
+                <span className="text-lg font-bold">{stat.value}%</span>
+              </div>
+              <Progress value={stat.value} className="h-2" />
+              <p className="text-xs text-muted-foreground mt-2">{stat.info}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
         <Card className="overflow-hidden">
           <CardHeader className="p-4">
             <CardTitle className="text-sm">Platform Aktivitesi</CardTitle>
+            <CardDescription className="text-xs">Haftalık kullanıcı ve işlem verileri</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="h-[200px]">
+            <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={activityData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" fontSize={10} />
                   <YAxis fontSize={10} />
                   <Tooltip />
-                  <Line type="monotone" dataKey="users" stroke="#8884d8" />
-                  <Line type="monotone" dataKey="listings" stroke="#82ca9d" />
-                  <Line type="monotone" dataKey="auctions" stroke="#ffc658" />
+                  <Line type="monotone" dataKey="users" name="Kullanıcılar" stroke="#8884d8" />
+                  <Line type="monotone" dataKey="listings" name="İlanlar" stroke="#82ca9d" />
+                  <Line type="monotone" dataKey="auctions" name="Mezatlar" stroke="#ffc658" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -103,28 +184,20 @@ const Index = () => {
 
         <Card className="overflow-hidden">
           <CardHeader className="p-4">
-            <CardTitle className="text-sm">Gelir Dağılımı</CardTitle>
+            <CardTitle className="text-sm">Kategori Dağılımı ve Satışlar</CardTitle>
+            <CardDescription className="text-xs">Kategorilere göre satış performansı</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="h-[200px]">
+            <div className="h-[250px]">
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={revenueData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, value }) => `${name}: ${value}%`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {revenueData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
+                <BarChart data={categoryData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" fontSize={10} />
+                  <YAxis fontSize={10} />
                   <Tooltip />
-                </PieChart>
+                  <Bar dataKey="value" name="Oran (%)" fill="#8884d8" />
+                  <Bar dataKey="sales" name="Satış (₺)" fill="#82ca9d" />
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </CardContent>
@@ -134,20 +207,24 @@ const Index = () => {
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
         <Card className="overflow-hidden lg:col-span-2">
           <CardHeader className="p-4">
-            <CardTitle className="text-sm">Bekleyen Onaylar</CardTitle>
+            <CardTitle className="text-sm">En İyi Performans Gösteren Mağazalar</CardTitle>
           </CardHeader>
-          <CardContent className="p-0">
-            <div className="h-[200px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={activityData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" fontSize={10} />
-                  <YAxis fontSize={10} />
-                  <Tooltip />
-                  <Bar dataKey="listings" fill="#8884d8" />
-                  <Bar dataKey="auctions" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
+          <CardContent className="p-4">
+            <div className="space-y-4">
+              {topStores.map((store) => (
+                <div key={store.name} className="flex items-center justify-between p-2 border rounded-lg">
+                  <div>
+                    <div className="font-medium text-sm">{store.name}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {store.items} Ürün · {store.rating} Puan
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-medium text-sm">₺{store.sales.toLocaleString()}</div>
+                    <div className="text-xs text-muted-foreground">Toplam Satış</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -164,8 +241,15 @@ const Index = () => {
               {recentActivity.map((activity) => (
                 <div key={activity.id} className="flex items-start gap-2 text-xs">
                   <div className="w-2 h-2 rounded-full bg-primary mt-1.5" />
-                  <div>
-                    <p className="font-medium">{activity.text}</p>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <p className="font-medium">{activity.text}</p>
+                      {activity.amount && (
+                        <Badge variant="secondary" className="ml-2">
+                          {activity.amount}
+                        </Badge>
+                      )}
+                    </div>
                     <p className="text-muted-foreground">{activity.time}</p>
                   </div>
                 </div>
