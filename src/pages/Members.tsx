@@ -16,7 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, User, Eye, Bell, Pause, Search, Edit, RotateCcw, Send, UserPlus } from "lucide-react";
+import { MoreHorizontal, User, Eye, Bell, Pause, Search, Edit, RotateCcw, Send, UserPlus, Store } from "lucide-react";
 import { format } from "date-fns";
 import { useState } from "react";
 
@@ -28,6 +28,7 @@ const members = [
     email: "ahmet.yilmaz@email.com",
     phone: "+90 532 123 4567",
     city: "İstanbul",
+    store: "Yılmaz Electronics",
     joinDate: new Date("2024-01-15"),
   },
   {
@@ -37,6 +38,7 @@ const members = [
     email: "ayse.demir@email.com",
     phone: "+90 533 234 5678",
     city: "Ankara",
+    store: null,
     joinDate: new Date("2024-02-01"),
   },
   {
@@ -46,6 +48,7 @@ const members = [
     email: "mehmet.kaya@email.com",
     phone: "+90 535 345 6789",
     city: "İzmir",
+    store: "Kaya Market",
     joinDate: new Date("2024-02-15"),
   },
   {
@@ -55,6 +58,7 @@ const members = [
     email: "zeynep.celik@email.com",
     phone: "+90 536 456 7890",
     city: "Bursa",
+    store: null,
     joinDate: new Date("2024-03-01"),
   },
   {
@@ -64,6 +68,7 @@ const members = [
     email: "mustafa.sahin@email.com",
     phone: "+90 537 567 8901",
     city: "Antalya",
+    store: "Şahin Ticaret",
     joinDate: new Date("2024-03-15"),
   },
   {
@@ -73,6 +78,7 @@ const members = [
     email: "fatma.yildiz@email.com",
     phone: "+90 538 678 9012",
     city: "İstanbul",
+    store: null,
     joinDate: new Date("2024-03-20"),
   },
   {
@@ -82,6 +88,7 @@ const members = [
     email: "ali.ozturk@email.com",
     phone: "+90 539 789 0123",
     city: "Ankara",
+    store: "Öztürk Mağazası",
     joinDate: new Date("2024-03-25"),
   },
   {
@@ -91,6 +98,7 @@ const members = [
     email: "selin.aktas@email.com",
     phone: "+90 532 890 1234",
     city: "İzmir",
+    store: null,
     joinDate: new Date("2024-04-01"),
   },
   {
@@ -100,6 +108,7 @@ const members = [
     email: "can.aydin@email.com",
     phone: "+90 533 901 2345",
     city: "Bursa",
+    store: "Aydın Shop",
     joinDate: new Date("2024-04-05"),
   },
   {
@@ -109,6 +118,7 @@ const members = [
     email: "elif.koc@email.com",
     phone: "+90 535 012 3456",
     city: "Antalya",
+    store: null,
     joinDate: new Date("2024-04-10"),
   },
 ];
@@ -118,7 +128,7 @@ const Members = () => {
 
   const filteredMembers = members.filter((member) =>
     Object.values(member).some((value) =>
-      value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
 
@@ -152,6 +162,7 @@ const Members = () => {
               <TableHead>E-posta</TableHead>
               <TableHead>Telefon</TableHead>
               <TableHead>Şehir</TableHead>
+              <TableHead>Mağaza</TableHead>
               <TableHead>Üyelik Tarihi</TableHead>
               <TableHead className="text-right">İşlemler</TableHead>
             </TableRow>
@@ -171,6 +182,16 @@ const Members = () => {
                 <TableCell>{member.email}</TableCell>
                 <TableCell>{member.phone}</TableCell>
                 <TableCell>{member.city}</TableCell>
+                <TableCell>
+                  {member.store ? (
+                    <div className="flex items-center gap-2">
+                      <Store className="w-4 h-4 text-gray-500" />
+                      {member.store}
+                    </div>
+                  ) : (
+                    "-"
+                  )}
+                </TableCell>
                 <TableCell>{format(member.joinDate, 'dd.MM.yyyy')}</TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
