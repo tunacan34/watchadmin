@@ -1,4 +1,3 @@
-
 import {
   Table,
   TableBody,
@@ -138,12 +137,10 @@ const Members = () => {
   const [filter, setFilter] = useState<"all" | "store" | "member">("all");
 
   const filteredMembers = members.filter((member) => {
-    // Önce arama filtresini uygula
     const matchesSearch = Object.values(member).some((value) =>
       value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // Sonra mağaza filtresini uygula
     switch (filter) {
       case "store":
         return matchesSearch && member.store !== null;
@@ -214,7 +211,6 @@ const Members = () => {
               <TableHead>Telefon</TableHead>
               <TableHead>Şehir</TableHead>
               <TableHead>Mağaza</TableHead>
-              <TableHead>Mağaza Tipi</TableHead>
               <TableHead>Üyelik Tarihi</TableHead>
               <TableHead className="text-right">İşlemler</TableHead>
             </TableRow>
@@ -236,25 +232,24 @@ const Members = () => {
                 <TableCell>{member.city}</TableCell>
                 <TableCell>
                   {member.store ? (
-                    <div className="flex items-center gap-2">
-                      <Store className="w-4 h-4 text-gray-500" />
-                      {member.store}
-                    </div>
-                  ) : (
-                    "-"
-                  )}
-                </TableCell>
-                <TableCell>
-                  {member.storeType ? (
-                    <div className="flex items-center gap-2">
-                      {member.storeType === "premium" ? (
-                        <Crown className="w-4 h-4 text-yellow-500" />
-                      ) : (
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
                         <Store className="w-4 h-4 text-gray-500" />
-                      )}
-                      <span className={member.storeType === "premium" ? "text-yellow-500 font-medium" : ""}>
-                        {member.storeType === "premium" ? "Premium" : "Standart"}
-                      </span>
+                        {member.store}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm">
+                        {member.storeType === "premium" ? (
+                          <>
+                            <Crown className="w-3 h-3 text-yellow-500" />
+                            <span className="text-yellow-500 font-medium">Premium</span>
+                          </>
+                        ) : (
+                          <>
+                            <Store className="w-3 h-3 text-gray-500" />
+                            <span className="text-gray-500">Standart</span>
+                          </>
+                        )}
+                      </div>
                     </div>
                   ) : (
                     "-"
