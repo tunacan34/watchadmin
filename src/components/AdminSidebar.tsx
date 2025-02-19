@@ -39,7 +39,7 @@ const menuItems = [
   { icon: Tag, label: "MARKA MODEL", href: "/brands" },
   { icon: MessageSquare, label: "DESTEK TALEPLERİ", href: "/support" },
   { icon: MessageCircle, label: "YORUMLAR", href: "/comments" },
-  { icon: AlertTriangle, label: "İLAN BİLDİRİM", href: "/reports" },
+  { icon: AlertTriangle, label: "ŞÜPHELİ İLANLAR", href: "/reports" },
   { icon: Settings, label: "AYARLAR", href: "/settings" },
 ];
 

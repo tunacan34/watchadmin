@@ -108,7 +108,7 @@ const Reports = () => {
   return (
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-semibold text-admin-foreground">İlan ve Mezat Bildirimleri</h1>
+        <h1 className="text-3xl font-semibold text-admin-foreground">Şüpheli İlanlar</h1>
         <div className="flex items-center gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
