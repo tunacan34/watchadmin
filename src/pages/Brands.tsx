@@ -78,7 +78,6 @@ const Brands = () => {
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Dosyayı base64'e çevir
       const reader = new FileReader();
       reader.onloadend = () => {
         if (typeof reader.result === 'string') {
@@ -244,7 +243,7 @@ const Brands = () => {
         </Card>
 
         {selectedBrand && (
-          <Card>
+          <Card className="w-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
               <div className="flex items-center gap-3">
                 <Avatar className="h-8 w-8">
@@ -253,16 +252,48 @@ const Brands = () => {
                 </Avatar>
                 <CardTitle className="text-lg">{selectedBrand.name} Modelleri</CardTitle>
               </div>
-              {!isAddingModels && (
+              <div className="flex gap-2">
                 <Button 
                   variant="outline" 
                   size="sm"
-                  onClick={() => setIsAddingModels(true)}
+                  onClick={() => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.onchange = (e) => {
+                      const file = (e.target as HTMLInputElement).files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onloadend = () => {
+                          if (typeof reader.result === 'string') {
+                            const updatedBrands = brands.map(brand => 
+                              brand.id === selectedBrand.id 
+                                ? { ...brand, logoUrl: reader.result }
+                                : brand
+                            );
+                            setBrands(updatedBrands);
+                          }
+                        };
+                        reader.readAsDataURL(file);
+                      }
+                    };
+                    input.click();
+                  }}
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Model Ekle
+                  <Image className="w-4 h-4 mr-2" />
+                  Logo Ekle
                 </Button>
-              )}
+                {!isAddingModels && (
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setIsAddingModels(true)}
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Model Ekle
+                  </Button>
+                )}
+              </div>
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-[450px]">
